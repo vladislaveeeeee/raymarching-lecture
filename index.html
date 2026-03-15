@@ -367,7 +367,7 @@ public class PracticeTask {
 
     private void initWindow() {
         GLFWErrorCallback.createPrint(System.err).set();
-        if (!glfwInit()) throw new IllegalStateException("Failed to initialize GLFW");
+        if (!glfwInit()) throw new IllegalStateException("Nepodarilo sa inicializovať GLFW");
 
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -376,7 +376,7 @@ public class PracticeTask {
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
 
         window = glfwCreateWindow(width, height, "Raymarching Workshop - Start", NULL, NULL);
-        if (window == NULL) throw new RuntimeException("Failed to create window");
+        if (window == NULL) throw new RuntimeException("Nepodarilo sa vytvoriť okno");
 
         glfwSetFramebufferSizeCallback(window, (w, nw, nh) -> {
             width = nw; height = nh;
@@ -400,7 +400,7 @@ public class PracticeTask {
             glClear(GL_COLOR_BUFFER_BIT);
             glUseProgram(program);
 
-            // Передаємо час та роздільну здатність у шейдер
+            // Odosielame čas a rozlíšenie do shaderu
             glUniform1f(glGetUniformLocation(program, "uTime"), (float) glfwGetTime());
             glUniform2f(glGetUniformLocation(program, "uResolution"), (float) width, (float) height);
 
@@ -432,13 +432,14 @@ public class PracticeTask {
         int s = glCreateShader(type);
         glShaderSource(s, src);
         glCompileShader(s);
-        // Перевірка на помилки компіляції
+        // Kontrola chýb pri kompilácii
         if (glGetShaderi(s, GL_COMPILE_STATUS) == GL_FALSE) {
-            System.err.println("Shader Error: " + glGetShaderInfoLog(s));
+            System.err.println("Chyba shaderu: " + glGetShaderInfoLog(s));
         }
         return s;
     }
 
+    // Vertex shader vytvorí jeden veľký trojuholník cez celú obrazovku
     private static final String VERTEX_SHADER = """
         #version 330 core
         void main() {
@@ -459,16 +460,16 @@ public class PracticeTask {
             const float MAX_DIST = 100.0;
             const float EPSILON = 0.001;
             
-            // 1. Сюди ми додамо функцію smin
+            // 1. Sem pridáme funkciu smin (plynulé minimum)
             
-            // 2. Сюди ми додамо SDF примітиви (сфери)
+            // 2. Sem pridáme SDF primitíva (gule)
             
-            // 3. Сюди ми додамо функцію map (опис сцени)
+            // 3. Sem pridáme funkciu map (popis scény)
             float map(vec3 p) {
-                return length(p) - 1.0; // Тимчасова сфера в центрі
+                return length(p) - 1.0; // Dočasná guľa v strede
             }
             
-            // 4. Сюди ми напишемо алгоритм Raymarching
+            // 4. Sem napíšeme algoritmus Raymarching
             float raymarch(vec3 ro, vec3 rd) {
                 float t = 0.0;
                 for(int i = 0; i < MAX_STEPS; i++) {
@@ -481,27 +482,29 @@ public class PracticeTask {
                 return -1.0;
             }
             
-            // 5. Сюди ми додамо розрахунок нормалей
+            // 5. Sem pridáme výpočet normál
             
             void main() {
-                // UV координати (-1 до 1, з урахуванням пропорцій)
+                // UV súradnice (-1 až 1, s ohľadom na proporcie)
                 vec2 uv = (gl_FragCoord.xy * 2.0 - uResolution.xy) / uResolution.y;
                 
-                // Налаштування камери
-                vec3 ro = vec3(0.0, 0.0, -5.0); // Позиція камери
-                vec3 rd = normalize(vec3(uv, 1.0)); // Напрямок променя
+                // Nastavenie kamery
+                vec3 ro = vec3(0.0, 0.0, -5.0); // Pozícia kamery
+                vec3 rd = normalize(vec3(uv, 1.0)); // Smer lúča
                 
-                // Виклик Raymarching
+                // Volanie Raymarchingu
                 float t = raymarch(ro, rd);
                 
-                // Базовий колір (фон)
+                // Základná farba (pozadie)
                 vec3 color = vec3(0.1, 0.1, 0.12);
                 
                 if(t > 0.0) {
-                    // Колір при влучанні (поки що просто білий)
+                    // Farba pri zásahu (zatiaľ biela)
                     color = vec3(1.0);
                 }
                 
+                // Gama korekcia
+                color = pow(color, vec3(0.4545));
                 fragColor = vec4(color, 1.0);
             }
         """;
