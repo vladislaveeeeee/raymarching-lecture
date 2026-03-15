@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="sk">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -34,8 +35,8 @@
             background: rgba(22, 22, 26, 0.95);
             padding: 50px;
             border-radius: 32px;
-            border: 1px solid rgba(255,255,255,0.05);
-            box-shadow: 0 40px 100px rgba(0,0,0,0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8);
             backdrop-filter: blur(20px);
         }
 
@@ -61,7 +62,7 @@
             display: flex;
             gap: 10px;
             margin-bottom: 30px;
-            background: rgba(0,0,0,0.3);
+            background: rgba(0, 0, 0, 0.3);
             padding: 8px;
             border-radius: 16px;
             width: fit-content;
@@ -98,8 +99,15 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .menu-item {
@@ -107,14 +115,14 @@
             margin-bottom: 12px;
             border-radius: 16px;
             transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid rgba(255,255,255,0.03);
+            border: 1px solid rgba(255, 255, 255, 0.03);
         }
 
         .menu-item:hover {
             transform: scale(1.02);
             border-color: var(--accent);
             background: #1e1e24;
-            box-shadow: 0 10px 30px rgba(255,107,0,0.1);
+            box-shadow: 0 10px 30px rgba(255, 107, 0, 0.1);
         }
 
         .menu-item a {
@@ -138,8 +146,17 @@
             flex-shrink: 0;
         }
 
-        .sk .num { background: rgba(0, 51, 173, 0.2); color: #4dabff; border: 1px solid rgba(0, 51, 173, 0.5); }
-        .ua .num { background: rgba(255, 215, 0, 0.1); color: #ffd700; border: 1px solid rgba(255, 215, 0, 0.4); }
+        .sk .num {
+            background: rgba(0, 51, 173, 0.2);
+            color: #4dabff;
+            border: 1px solid rgba(0, 51, 173, 0.5);
+        }
+
+        .ua .num {
+            background: rgba(255, 215, 0, 0.1);
+            color: #ffd700;
+            border: 1px solid rgba(255, 215, 0, 0.4);
+        }
 
         .title-text {
             font-size: 1.15rem;
@@ -173,7 +190,7 @@
         footer {
             margin-top: 40px;
             padding-top: 20px;
-            border-top: 1px solid rgba(255,255,255,0.05);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
             font-size: 0.85rem;
             color: #555;
             display: flex;
@@ -217,67 +234,301 @@
         }
     </style>
 </head>
+
 <body>
 
-<div class="container">
-    <h1>Raymarching</h1>
-    <div class="subtitle">Math as a Creator's Tool</div>
+    <div class="container">
+        <h1>Raymarching</h1>
+        <div class="subtitle">Math as a Creator's Tool</div>
 
-    <div class="lang-switch">
-        <button class="lang-btn active" onclick="showLang('sk')">🇸🇰 Slovensky</button>
-        <button class="lang-btn" onclick="showLang('ua')">🇺🇦 Українська</button>
-    </div>
+        <div class="lang-switch">
+            <button class="lang-btn active" onclick="showLang('sk')">🇸🇰 Slovensky</button>
+            <button class="lang-btn" onclick="showLang('ua')">🇺🇦 Українська</button>
+        </div>
 
-    <div id="sk-version" class="section-group active">
-        <ul class="menu-list">
-            <li class="menu-item sk"><a href="scriptsk.html"><div class="num">01</div><div class="title-text">Úvod: Koniec polygónov</div><div class="flag">🇸🇰</div></a></li>
-            <li class="menu-item sk"><a href="script2sk.html"><div class="num">02</div><div class="title-text">SDF a Sphere Tracing</div><div class="flag">🇸🇰</div></a></li>
-            <li class="menu-item sk"><a href="script3sk.html"><div class="num">03</div><div class="title-text">CSG: Logika a nekonečno</div><div class="flag">🇸🇰</div></a></li>
-            <li class="menu-item sk"><a href="script4sk.html"><div class="num">04</div><div class="title-text">Svetlo a Phongov model</div><div class="flag">🇸🇰</div></a></li>
-            <li class="menu-item sk"><a href="script5sk.html"><div class="num">05</div><div class="title-text">Finále: Lava Lamp</div><div class="flag">🇸🇰</div></a></li>
-        </ul>
-    </div>
+        <div id="sk-version" class="section-group active">
+            <ul class="menu-list">
+                <li class="menu-item sk"><a href="scriptsk.html">
+                        <div class="num">01</div>
+                        <div class="title-text">Úvod: Koniec polygónov</div>
+                        <div class="flag">🇸🇰</div>
+                    </a></li>
+                <li class="menu-item sk"><a href="script2sk.html">
+                        <div class="num">02</div>
+                        <div class="title-text">SDF a Sphere Tracing</div>
+                        <div class="flag">🇸🇰</div>
+                    </a></li>
+                <li class="menu-item sk"><a href="script3sk.html">
+                        <div class="num">03</div>
+                        <div class="title-text">CSG: Logika a nekonečno</div>
+                        <div class="flag">🇸🇰</div>
+                    </a></li>
+                <li class="menu-item sk"><a href="script4sk.html">
+                        <div class="num">04</div>
+                        <div class="title-text">Svetlo a Phongov model</div>
+                        <div class="flag">🇸🇰</div>
+                    </a></li>
+                <li class="menu-item sk"><a href="script5sk.html">
+                        <div class="num">05</div>
+                        <div class="title-text">Finále: Lava Lamp</div>
+                        <div class="flag">🇸🇰</div>
+                    </a></li>
+            </ul>
+        </div>
 
-    <div id="ua-version" class="section-group">
-        <ul class="menu-list">
-            <li class="menu-item ua"><a href="script.html"><div class="num">01</div><div class="title-text">Вступ: Відмова od полігонів</div><div class="flag">🇺🇦</div></a></li>
-            <li class="menu-item ua"><a href="script2.html"><div class="num">02</div><div class="title-text">SDF та Sphere Tracing</div><div class="flag">🇺🇦</div></a></li>
-            <li class="menu-item ua"><a href="script3.html"><div class="num">03</div><div class="title-text">CSG: Логіка та нескінченність</div><div class="flag">🇺🇦</div></a></li>
-            <li class="menu-item ua"><a href="script4.html"><div class="num">04</div><div class="title-text">Світло та модель Фонга</div><div class="flag">🇺🇦</div></a></li>
-            <li class="menu-item ua"><a href="script5.html"><div class="num">05</div><div class="title-text">Фінал: Lava Lamp</div><div class="flag">🇺🇦</div></a></li>
-        </ul>
-    </div>
+        <div id="ua-version" class="section-group">
+            <ul class="menu-list">
+                <li class="menu-item ua"><a href="script.html">
+                        <div class="num">01</div>
+                        <div class="title-text">Вступ: Відмова od полігонів</div>
+                        <div class="flag">🇺🇦</div>
+                    </a></li>
+                <li class="menu-item ua"><a href="script2.html">
+                        <div class="num">02</div>
+                        <div class="title-text">SDF та Sphere Tracing</div>
+                        <div class="flag">🇺🇦</div>
+                    </a></li>
+                <li class="menu-item ua"><a href="script3.html">
+                        <div class="num">03</div>
+                        <div class="title-text">CSG: Логіка та нескінченність</div>
+                        <div class="flag">🇺🇦</div>
+                    </a></li>
+                <li class="menu-item ua"><a href="script4.html">
+                        <div class="num">04</div>
+                        <div class="title-text">Світло та модель Фонга</div>
+                        <div class="flag">🇺🇦</div>
+                    </a></li>
+                <li class="menu-item ua"><a href="script5.html">
+                        <div class="num">05</div>
+                        <div class="title-text">Фінал: Lava Lamp</div>
+                        <div class="flag">🇺🇦</div>
+                    </a></li>
+            </ul>
+        </div>
 
-    <div class="download-section">
-        <p style="color: #888; margin-bottom: 15px; font-size: 0.95rem;">Materiály na stiahnutie / Матеріали для завантаження:</p>
-        <a href="Raymarching_Presentation.pptx" download class="download-btn">
-            <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-            Download PowerPoint (.pptx)
-        </a>
-    </div>
+        <div class="download-section">
+            <p style="color: #888; margin-bottom: 15px; font-size: 0.95rem;">Materiály na stiahnutie / Матеріали для
+                завантаження:</p>
+            <a href="Raymarching_Presentation.pptx" download class="download-btn">
+                <svg viewBox="0 0 24 24">
+                    <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" />
+                </svg>
+                Download PowerPoint (.pptx)
+            </a>
+        </div>
 
-    <div style="text-align: center;">
-        <a href="Instructions.html" class="prep-link">⚙️ Setup Environment (LWJGL)</a>
-    </div>
+        <div style="text-align: center;">
+            <a href="Instructions.html" class="prep-link">⚙️ Setup Environment (LWJGL)</a>
+        </div>
 
-    <footer>
-        <span>UPJŠ v Košiciach · 2026</span>
-        <span>Seminár z počítačovej grafiky</span>
-    </footer>
-</div>
 
-<script>
-    function showLang(lang) {
-        document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
-        document.querySelectorAll('.section-group').forEach(group => group.classList.remove('active'));
-        if(lang === 'sk') {
-            document.getElementById('sk-version').classList.add('active');
-            event.currentTarget.classList.add('active');
-        } else {
-            document.getElementById('ua-version').classList.add('active');
-            event.currentTarget.classList.add('active');
+
+        <section class="container" style="max-width: 1000px; margin-top: 50px; margin-bottom: 50px;">
+            <div
+                style="background: rgba(137, 180, 250, 0.1); border: 2px solid #89b4fa; padding: 30px; border-radius: 15px;">
+                <h2 style="color: #89b4fa; margin-top: 0;">🛠️ Praktická úloha: Šablóna projektu</h2>
+                <p>Skopírujte tento kód do vášho IDE (súbor <code>RaymarchingTemplate.java</code>). Ide o základnú
+                    kostru, ktorá otvára okno a pripravuje prostredie pre písanie shaderov. Počas cvičenia spoločne od
+                    nuly naprogramujeme funkciu <code>map</code> a algoritmus <code>raymarch</code>.
+                </p>
+
+                <div
+                    style="background: #1e1e2e; padding: 10px 20px; border-radius: 10px 10px 0 0; border-bottom: 1px solid #444; color: #cdd6f4; font-family: monospace; font-size: 0.9em;">
+                    RaymarchingTemplate.java
+                </div>
+                <pre
+                    style="margin-top: 0; background: #11111b; color: #89b4fa; padding: 20px; border-radius: 0 0 10px 10px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.5; border: 1px solid #444; max-height: 500px;">
+import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.opengl.GL;
+
+import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL33C.*;
+import static org.lwjgl.system.MemoryUtil.NULL;
+
+public class PracticeTask {
+
+    private long window;
+    private int program;
+    private int vao;
+
+    private int width = 1000;
+    private int height = 800;
+
+    public static void main(String[] args) {
+        new PracticeTask().run();
+    }
+
+    public void run() {
+        initWindow();
+        initOpenGL();
+        loop();
+        cleanup();
+    }
+
+    private void initWindow() {
+        GLFWErrorCallback.createPrint(System.err).set();
+        if (!glfwInit()) throw new IllegalStateException("Failed to initialize GLFW");
+
+        glfwDefaultWindowHints();
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
+
+        window = glfwCreateWindow(width, height, "Raymarching Workshop - Start", NULL, NULL);
+        if (window == NULL) throw new RuntimeException("Failed to create window");
+
+        glfwSetFramebufferSizeCallback(window, (w, nw, nh) -> {
+            width = nw; height = nh;
+            glViewport(0, 0, width, height);
+        });
+
+        glfwMakeContextCurrent(window);
+        glfwSwapInterval(1);
+        glfwShowWindow(window);
+    }
+
+    private void initOpenGL() {
+        GL.createCapabilities();
+        vao = glGenVertexArrays();
+        glBindVertexArray(vao);
+        program = createShaderProgram(VERTEX_SHADER, FRAGMENT_SHADER);
+    }
+
+    private void loop() {
+        while (!glfwWindowShouldClose(window)) {
+            glClear(GL_COLOR_BUFFER_BIT);
+            glUseProgram(program);
+
+            // Передаємо час та роздільну здатність у шейдер
+            glUniform1f(glGetUniformLocation(program, "uTime"), (float) glfwGetTime());
+            glUniform2f(glGetUniformLocation(program, "uResolution"), (float) width, (float) height);
+
+            glBindVertexArray(vao);
+            glDrawArrays(GL_TRIANGLES, 0, 3);
+
+            glfwSwapBuffers(window);
+            glfwPollEvents();
         }
     }
-</script>
+
+    private void cleanup() {
+        glDeleteProgram(program);
+        glDeleteVertexArrays(vao);
+        glfwDestroyWindow(window);
+        glfwTerminate();
+    }
+
+    private int createShaderProgram(String v, String f) {
+        int vs = compileShader(GL_VERTEX_SHADER, v);
+        int fs = compileShader(GL_FRAGMENT_SHADER, f);
+        int p = glCreateProgram();
+        glAttachShader(p, vs); glAttachShader(p, fs);
+        glLinkProgram(p);
+        return p;
+    }
+
+    private int compileShader(int type, String src) {
+        int s = glCreateShader(type);
+        glShaderSource(s, src);
+        glCompileShader(s);
+        // Перевірка на помилки компіляції
+        if (glGetShaderi(s, GL_COMPILE_STATUS) == GL_FALSE) {
+            System.err.println("Shader Error: " + glGetShaderInfoLog(s));
+        }
+        return s;
+    }
+
+    private static final String VERTEX_SHADER = """
+        #version 330 core
+        void main() {
+            vec2 pos[3] = vec2[](vec2(-1.0, -1.0), vec2(3.0, -1.0), vec2(-1.0, 3.0));
+            gl_Position = vec4(pos[gl_VertexID], 0.0, 1.0);
+        }
+        """;
+
+    private static final String FRAGMENT_SHADER = """
+            #version 330 core
+            
+            out vec4 fragColor;
+            
+            uniform float uTime;
+            uniform vec2 uResolution;
+            
+            const int MAX_STEPS = 100;
+            const float MAX_DIST = 100.0;
+            const float EPSILON = 0.001;
+            
+            // 1. Сюди ми додамо функцію smin
+            
+            // 2. Сюди ми додамо SDF примітиви (сфери)
+            
+            // 3. Сюди ми додамо функцію map (опис сцени)
+            float map(vec3 p) {
+                return length(p) - 1.0; // Тимчасова сфера в центрі
+            }
+            
+            // 4. Сюди ми напишемо алгоритм Raymarching
+            float raymarch(vec3 ro, vec3 rd) {
+                float t = 0.0;
+                for(int i = 0; i < MAX_STEPS; i++) {
+                    vec3 p = ro + rd * t;
+                    float d = map(p);
+                    if(d < EPSILON) return t;
+                    if(t > MAX_DIST) break;
+                    t += d;
+                }
+                return -1.0;
+            }
+            
+            // 5. Сюди ми додамо розрахунок нормалей
+            
+            void main() {
+                // UV координати (-1 до 1, з урахуванням пропорцій)
+                vec2 uv = (gl_FragCoord.xy * 2.0 - uResolution.xy) / uResolution.y;
+                
+                // Налаштування камери
+                vec3 ro = vec3(0.0, 0.0, -5.0); // Позиція камери
+                vec3 rd = normalize(vec3(uv, 1.0)); // Напрямок променя
+                
+                // Виклик Raymarching
+                float t = raymarch(ro, rd);
+                
+                // Базовий колір (фон)
+                vec3 color = vec3(0.1, 0.1, 0.12);
+                
+                if(t > 0.0) {
+                    // Колір при влучанні (поки що просто білий)
+                    color = vec3(1.0);
+                }
+                
+                fragColor = vec4(color, 1.0);
+            }
+        """;
+}
+        </pre>
+            </div>
+        </section>
+
+        <footer>
+            <span>UPJŠ v Košiciach · 2026</span>
+            <span>Seminár z počítačovej grafiky</span>
+        </footer>
+    </div>
+
+    <script>
+        function showLang(lang) {
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.section-group').forEach(group => group.classList.remove('active'));
+            if (lang === 'sk') {
+                document.getElementById('sk-version').classList.add('active');
+                event.currentTarget.classList.add('active');
+            } else {
+                document.getElementById('ua-version').classList.add('active');
+                event.currentTarget.classList.add('active');
+            }
+        }
+    </script>
 </body>
+
 </html>
