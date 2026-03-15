@@ -154,41 +154,45 @@
     </style>
 </head>
 
-<div class="block-title">Blok 5. Zhrnutie: Matematika ako nástroj tvorcu</div>
+<div class="block-title">Блок 5. Підсумок: Математика як інструмент творця</div>
 
 <div class="speech-text">
-    <p>«Takže, milí študenti, prešli sme cestu od prázdnej obrazovky až k zložitým scénam generovaným v reálnom čase. Poďme si v krátkosti zrekapitulovať, čo všetko už máme vo svojom arzenáli:</p>
-    
-    <ul>
-        <li>Naučili sme sa ovládať svetelné lúče pomocou algoritmu <strong>Raymarching</strong>.</li>
-        <li>Pochopili sme, ako budovať geometriu nie z polygónov, ale pomocou <strong>SDF funkcií</strong>, čo nám poskytuje nekonečnú detailnosť.</li>
-        <li>Osvojili sme si fyziku svetla podľa <strong>Phonga</strong>, naučili sme sa vypočítavať normály a vytvárať mäkké tiene (<strong>Soft Shadows</strong>).</li>
-    </ul>
+<p>«Отже, шановні студенти, ми пройшли шлях від порожнього екрана до складних сцен, що генеруються в реальному часі. Давайте коротко резюмуємо, що вже є у нашому арсеналі:</p>
 
-    <p>Toto je fundament. Je to pevná, logická báza počítačovej grafiky. Ale teória bez praxe a kreativity sa rýchlo zabúda. Preto navrhujem nezastavovať sa pri statických kockách a sférach.»</p>
+<ul>
+    <li>Ми навчилися керувати світловими променями за допомогою алгоритму <strong>Raymarching</strong>.</li>
+    <li>Зрозуміли, як будувати геометрію не з полігонів, а за допомогою <strong>SDF-функцій</strong>, що забезпечує нам нескінченну детальність.</li>
+    <li>Опанували фізику світла за <strong>Фонгом</strong>, навчилися обчислювати нормалі та створювати м'які тіні (<strong>Soft Shadows</strong>).</li>
+</ul>
+
+<p>Це фундамент. Це міцна, логічна база комп'ютерної графіки. Але теорія без практики та креативності швидко забувається. Тому я пропоную не зупинятися на статичних кубах та сферах.»</p>
 </div>
 
 <hr>
 
 <div class="speech-text" style="background: rgba(255, 107, 0, 0.07); padding: 35px; border-radius: 15px; border: 2px solid #ff6b00; margin-top: 30px;">
-    <h2>3. Nová výzva: Poďme spolu napísať Lava Lamp!</h2>
-    <p>«Teraz vám chcem navrhnúť niečo špeciálne. Spoločne sme postavili "kostru" systému a teraz do nej vdýchneme život. Pozývam vás, aby ste sa ku mne pridali a spoločne sme realizovali projekt <strong>Lava Lamp (Lávová lampa)</strong>.</p>
+<h2>3. Новий виклик: Давайте разом напишемо Lava Lamp!</h2>
+<p>«Зараз я хочу запропонувати вам щось особливе. Ми разом збудували "скелет" системи, а тепер вдихнемо в нього життя. Запрошую вас приєднатися до мене, щоб спільно реалізувати проєкт <strong>Lava Lamp (Лавова лампа)</strong>.</p>
 
-    <p>Prečo je to skvelé? Pretože lávová lampa je ideálne miesto na otestovanie vašich zručností. Už to nie je len strohá geometria, je to imitácia živého, chaotického procesu. Je to projekt, kde sa matematika stáva "biologickou".»</p>
+<p>Чому це круто? Тому що лавова лампа — ідеальне місце для перевірки ваших навичок. Це вже не просто сувора геометрія, це імітація живого, хаотичного процесу. Це проєкт, де математика стає "біологічною".»</p>
 
-    <h3>Čo v tomto projekte zrealizujeme:</h3>
-    <ul>
-        <li><strong>Efekt Metaballs a "Rezervoár":</strong> Použijeme funkciu <strong>smin (Smooth Minimum)</strong> s polynomiálnym vyhladzovaním. V kóde vytvoríme statickú základnú sféru (<code>baseSphere</code>) na dne, ktorá slúži ako zdroj lávy. Vďaka <code>smin</code> sa dynamické kvapky pri priblížení k základni plynule vnoria alebo odtrhnú s charakteristickými "ťahavými" mostíkmi, čo simuluje <strong>povrchové napätie</strong> (surface tension) reálnej tekutiny.</li>
-        <li><strong>Dynamická vertikálna animácia:</strong> Namiesto statických pozícií zavedieme trigonometrické závislosti od času (<code>uTime</code>). Každá z piatich kvapiek bude mať vlastnú frekvenciu a amplitúdu pohybu na osi Y, čo vytvorí prirodzený rytmus stúpania horúceho "vosku".</li>
-        <li><strong>Osvetľovací model Blinn-Phong:</strong> Pre dosiahnutie fotorealizmu pridáme výpočet <strong>half-vectoru</strong>. To nám umožní získať ostré a jasné zrkadlové odlesky (<strong>Specular highlights</strong>) s vysokou koncentráciou (128.0), čo dodá láve vzhľad lesklej, hustej olejovitej látky.</li>
-        <li><strong>Gama korekcia (Gamma Correction):</strong> Aby svetlo na vašom monitore vyzeralo prirodzene, celý výsledok prejde finálnou úpravou <code>pow(color, 0.4545)</code>, ktorá odstráni "špinavé" tiene a urobí žiarenie lampy mäkkým a objemným.</li>
-    </ul>
 
-    <p style="font-size: 1.2em; font-weight: bold; color: #ff6b00; margin-top: 20px;">
-        «Toto bude náš spoločný krok od písania kódu k vytváraniu digitálneho umenia. Kto je pripravený otvoriť IDE a premeniť tieto vzorce na živú hmotu?»
-    </p>
+
+<h3>Що ми реалізуємо у цьому проєкті:</h3>
+<ul>
+    <li><strong>Ефект Metaballs та "Резервуар":</strong> Ми використаємо функцію <strong>smin (Smooth Minimum)</strong> з поліноміальним згладжуванням. У коді створимо статичну базову сферу (<code>baseSphere</code>) на дні, яка слугуватиме джерелом лави. Завдяки <code>smin</code> динамічні краплі при наближенні до основи будуть плавно занурюватися або відриватися з характерними "тягучими" містками, що симулює <strong>поверхневий натяг</strong> реальної рідини.</li>
+    <li><strong>Динамічна вертикальна анімація:</strong> Замість статичних позицій ми введемо тригонометричні залежності від часу (<code>uTime</code>). Кожна з п'яти крапель матиме власну частоту та амплітуду руху по осі Y, що створить природний ритм підйому гарячого "воску".</li>
+    <li><strong>Освітлювальна модель Блінна-Фонга:</strong> Для досягнення фотореалізму додамо розрахунок <strong>half-vector</strong>. Це дозволить нам отримати гострі та яскраві дзеркальні відблиски (<strong>Specular highlights</strong>) з високою концентрацією (128.0), що надасть лаві вигляду блискучої, густої маслянистої речовини.</li>
+    <li><strong>Гамма-корекція (Gamma Correction):</strong> Щоб світло на вашому моніторі виглядало природно, весь результат пройде фінальну обробку <code>pow(color, 0.4545)</code>, яка прибере "брудні" тіні та зробить сяйво лампи м'яким і об'ємним.</li>
+</ul>
+
+
+
+<p style="font-size: 1.2em; font-weight: bold; color: #ff6b00; margin-top: 20px;">
+    «Це буде наш спільний крок від написання коду до створення цифрового мистецтва. Хто готовий відкрити IDE та перетворити ці формули на живу матерію?»
+</p>
 </div>
 
 <div class="speech-text" style="margin-top: 40px; text-align: center; border-top: 1px solid #444; padding-top: 30px;">
-    <p>«Raymarching je mostom medzi čistou logikou a vizuálnou estetikou. Ďakujem vám za pozornosť venovanú technickej časti a teraz... poďme tvoriť. Naša ďalšia zastávka — spoločná Lávová Lampa!»</p>
+<p>«Raymarching — це міст між чистою логікою та візуальною естетикою. Дякую вам за увагу до технічної частини, а тепер... нумо творити. Наша наступна зупинка — спільна Лавова Лампа!»</p>
 </div>

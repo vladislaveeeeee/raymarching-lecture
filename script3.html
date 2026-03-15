@@ -161,77 +161,77 @@
     </style>
 </head>
 
-<div class="block-title">Blok 3. Modelovanie matematikou: Logické operácie, transformácie a nekonečné svety</div>
+<div class="block-title">Блок 3. Моделювання математикою: Логічні операції, трансформації та нескінченні світи</div>
 
 <div class="speech-text">
-    <p>«Dostávame sa k najfascinujúcejšej časti projektu. Doteraz sme sa naučili vykresliť jednu sféru a vypočítať pre ňu základné osvetlenie. Raymarching sa však stáva skutočnou mágiou až vtedy, keď prejdeme k procedurálnemu modelovaniu (<strong>Procedural Modeling</strong>). Na rozdiel od klasickej počítačovej grafiky, kde sa objekty skladajú z miliónov polygónov, v mojom projekte je každý objekt len matematickou rovnicou.</p>
+<p>«Ми підходимо до найбільш захопливої частини проєкту. До цього часу ми навчилися рендерити одну сферу та обчислювати для неї базове освітлення. Проте Raymarching стає справжньою магією лише тоді, коли ми переходимо до процедурного моделювання (<strong>Procedural Modeling</strong>). На відміну від класичної комп'ютерної графіки, де об'єкти складаються з мільйонів полігонів, у моєму проєкті кожен об'єкт — це лише математичне рівняння.</p>
 
-    <p>Nenájdete tu žiadne vrcholy (vertices), hrany (edges) ani textúrne mapovanie (UV unwrapping). Namiesto kreslenia povrchu sa pýtame priestoru: "Čo sa tu nachádza?". Tento prístup sa nazýva <strong>CSG (Constructive Solid Geometry)</strong>. Je to metóda budovania zložitých telies z najjednoduchších primitívov pomocou logických operácií. Práve o tom budeme hovoriť teraz: ako som premenil matematické vzorce na nástroje digitálneho sochára.»</p>
+<p>Ви не знайдете тут жодних вершин (vertices), ребер (edges) чи текстурного розгортання (UV unwrapping). Замість малювання поверхні ми запитуємо у простору: "Що тут знаходиться?". Цей підхід називається <strong>CSG (Constructive Solid Geometry)</strong>. Це метод побудови складних тіл із найпростіших примітивів за допомогою логічних операцій. Саме про це ми поговоримо зараз: як я перетворив математичні формули на інструменти цифрового скульптора.»</p>
 </div>
 
 <div class="speech-text">
-    <h2>1. Teoretická báza: Štyri metódy manipulácie tvaru</h2>
-    <p>«Predtým, než otvoríme kód, je dôležité pochopiť nástroje, s ktorými pracujem. Keďže každý bod priestoru pozná vzdialenosť k najbližšiemu objektu cez <strong>SDF (Signed Distance Function)</strong>, môžeme týmito vzdialenosťami manipulovať pomocou elementárnej logiky.</p>
+<h2>1. Теоретична база: Чотири методи маніпуляції формою</h2>
+<p>«Перш ніж ми відкриємо код, важливо зрозуміти інструменти, з якими я працюю. Оскільки кожна точка простору знає відстань до найближчого об'єкта через <strong>SDF (Signed Distance Function)</strong>, ми можемо маніпулювати цими відстанями за допомогою елементарної логіки.</p>
 
-    <ul>
-        <li><strong>Union (Zjednotenie):</strong> Proces spojenia dvoch telies. Ak máme kocku a sféru, môžeme prinútiť grafickú kartu vnímať ich ako jeden objekt. Matematicky ide o výber minimálnej hodnoty (<code>min</code>) z dvoch funkcií vzdialenosti.</li>
-        <li><strong>Subtraction (Odčítanie):</strong> Jeden objekt sa stáva "formou" pre druhý. Predstavte si, že vtlačíte kovovú guľu do kusu teplého vosku — zostane tam ideálny odtlačok. V Raymarching-u sa to robí inverziou znamienka jednej z vzdialeností.</li>
-        <li><strong>Intersection (Prienik):</strong> Táto operácia ponechá len tú časť priestoru, kde sa dva objekty prekrývajú. Umožňuje to vytvárať detailné mechanické súčiastky alebo skosenia (<strong>facets</strong>).</li>
-        <li><strong>Scaling (Zmena mierky):</strong> Nejde len o zmenu veľkosti. Môžeme dynamicky "stláčať" alebo "rozťahovať" samotný priestor, čím meníme proporcie objektov v reálnom čase bez straty ich matematickej presnosti.»</li>
-    </ul>
-</div>
-
-<hr>
-
-<div class="speech-text">
-    <h2>2. Od teórie k praxi: Evolúcia kódu v Demo súboroch</h2>
-    <p>«Môj vývoj bol rozdelený na etapy, kde každá pridávala novú matematickú možnosť. Poďme si rozobrať jednotlivé súbory.»</p>
-
-    <div class="img-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
-        <div class="demo-card">
-            <h3>Demo 3: Ostré zjednotenie (Hard Union)</h3>
-            <p>V súbore <code>Demo3_SphereAndBox.java</code> som prvýkrát spojil dve rôzne geometrie. V metóde <code>map()</code> som vypočítal vzdialenosť k sfére a kocke samostatne a potom použil funkciu <code>min(sphere, box)</code>. To vytvára dokonale ostrý spoj. Grafická karta jednoducho porovnáva dve čísla: "Ktorý objekt je v tomto bode bližšie ku kamere?". Toto je základný princíp <strong>CSG modelovania</strong>.</p>
-        </div>
-
-        <div class="demo-card">
-            <h3>Demo 4: Mágia Smooth Minimum</h3>
-            <p>Ostré spoje vyzerajú umelo. Preto som v súbore <code>Demo4_SmoothUnion.java</code> zaviedol jednu z najsilnejších funkcií Raymarching-u — <strong>Smooth Minimum (smin)</strong>. Objekty sa akoby "zlievajú" a vytvárajú plynulý mostík. Napodobňuje to povrchové napätie tekutín alebo organické tvary (svaly, kožu). Matematicky tu len nevyberáme minimum, ale pridávame koeficient vyhladzovania, ktorý zmiešava polia vzdialeností (<strong>Distance Fields</strong>).</p>
-        </div>
-
-        <div class="demo-card">
-            <h3>Demo 6: Booleovská logika a dutiny</h3>
-            <p>V <code>Demo6_Subtraction.java</code> vytvárame <strong>dutú sféru</strong> (hollow sphere). Tento efekt dosahujeme pomocou funkcie <code>abs(sdSphere) - thickness</code>, čo premení plný objekt na tenkú škrupinu. Pomocou operácie <strong>Boolean Subtraction</strong> (matematicky <code>max(-box, sphere)</code>) sme vyrezali segment objektu. To nám umožňuje doslova nahliadnuť do vnútra matematického modelu.</p>
-        </div>
-
-        <div class="demo-card">
-            <h3>Demo 7: Transformácia priestoru (Scaling)</h3>
-            <p>Súbor <code>Demo7_Scaling.java</code> demonštruje prácu s rozmermi. Dôležitý detail: nezmenil som polomer sféry v argumentoch funkcie. Zmenil som mierku samotného priestoru <code>p</code> predtým, než som ho odovzdal funkcii. To umožňuje deformovať objekty, napríklad premeniť kocku na tenkú platňu alebo dlhý stĺp, jednoduchou manipuláciou s vektorom súradníc.</p>
-        </div>
-    </div>
+<ul>
+    <li><strong>Union (Об'єднання):</strong> Процес з'єднання двох тіл. Якщо у нас є куб і сфера, ми можемо змусити графічну карту сприймати їх як один об'єкт. Математично це вибір мінімального значення (<code>min</code>) з двох функцій відстані.</li>
+    <li><strong>Subtraction (Віднімання):</strong> Один об'єкт стає "формою" для іншого. Уявіть, що ви втискаєте металеву кульку в шматок теплого воску — там залишиться ідеальний відбиток. У Raymarching це робиться інверсією знака однієї з відстаней.</li>
+    <li><strong>Intersection (Перетин):</strong> Ця операція залишає лише ту частину простору, де два об'єкти перекриваються. Це дозволяє створювати детальні механічні деталі або фаски (<strong>facets</strong>).</li>
+    <li><strong>Scaling (Масштабування):</strong> Мова не лише про зміну розміру. Ми можемо динамічно "стискати" або "розтягувати" сам простір, змінюючи пропорції об'єктів у реальному часі без втрати їхньої математичної точності.</li>
+</ul>
 </div>
 
 <hr>
 
 <div class="speech-text">
-    <h2>3. Hlboká logika: Manipulácia s doménou (Domain Warp)</h2>
-    <p>«V kóde si môžete všimnúť zápisy ako <code>p - spherePos</code> alebo <code>p / scale</code>. Ide o kľúčový koncept Raymarching-u — <strong>Domain Transformation</strong> (transformácia domény). </p>
-    
-    <p>V klasických enginoch (Unity/Unreal) má objekt svoju "transformu" (pozíciu, rotáciu). V Raymarching-u je objekt vždy v centre súradníc <code>(0,0,0)</code>. Aby sme posunuli sféru doprava, nehýbeme sférou, ale posúvame celý priestor pre letiaci lúč doľava. Hovoríme lúču: "Predstav si, že svet sa posunul".</p>
+<h2>2. Від теорії до практики: Еволюція коду в Demo-файлах</h2>
+<p>«Мій процес розробки був розділений на етапи, де кожен додавав нову математичну можливість. Розберімо окремі файли.»</p>
 
-    <h3>Nekonečno bez nárokov na pamäť (Domain Repetition)</h3>
-    <p>Toto je jedna z najpôsobivejších funkcií. Pomocou operácie <code>mod()</code> (zvyšok po delení) na vektore <code>p</code> môžeme priestor "zacykliť". Lúč letí vpred, ale každých 5 metrov sa matematicky vráti do bodu 0. Výsledkom je, že jedna jediná sféra z <code>Demo 1</code> sa premení na nekonečný les sfér tiahnucich sa až za horizont.</p>
-
-    <div class="formula-box" style="background: #111; padding: 25px; border-radius: 12px; border: 1px solid #ff6b00; font-family: 'Courier New', monospace; color: #a6e3a1; margin: 20px 0;">
-        // Príklad zacyklenia priestoru (Domain Repetition)<br>
-        vec3 spacing = vec3(5.0);<br>
-        vec3 q = mod(p + 0.5 * spacing, spacing) - 0.5 * spacing;<br>
-        return sdSphere(q, 1.0);
+<div class="img-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+    <div class="demo-card">
+        <h3>Demo 3: Жорстке об'єднання (Hard Union)</h3>
+        <p>У файлі <code>Demo3_SphereAndBox.java</code> я вперше поєднав дві різні геометрії. У методі <code>map()</code> я обчислив відстань до сфери та куба окремо, а потім використав функцію <code>min(sphere, box)</code>. Це створює ідеально гострий стик. Графічна карта просто порівнює два числа: "Який об'єкт у цій точці ближче до камери?". Це базовий принцип <strong>CSG-моделювання</strong>.</p>
     </div>
+
+    <div class="demo-card">
+        <h3>Demo 4: Магія Smooth Minimum</h3>
+        <p>Гострі стики виглядають штучно. Тому у файлі <code>Demo4_SmoothUnion.java</code> я впровадив одну з найпотужніших функцій Raymarching — <strong>Smooth Minimum (smin)</strong>. Об'єкти ніби "зливаються", створюючи плавний місток. Це імітує поверхневий натяг рідин або органічні форми (м'язи, шкіру). Математично ми не просто обираємо мінімум, а додаємо коефіцієнт згладжування, який змішує поля відстаней (<strong>Distance Fields</strong>).</p>
+    </div>
+
+    <div class="demo-card">
+        <h3>Demo 6: Булева логіка та порожнини</h3>
+        <p>У <code>Demo6_Subtraction.java</code> ми створюємо <strong>порожнисту сферу</strong> (hollow sphere). Цей ефект досягається за допомогою функції <code>abs(sdSphere) - thickness</code>, що перетворює суцільний об'єкт на тонку оболонку. За допомогою операції <strong>Boolean Subtraction</strong> (математично <code>max(-box, sphere)</code>) ми вирізали сегмент об'єкта. Це дозволяє нам буквально зазирнути всередину математичної моделі.</p>
+    </div>
+
+    <div class="demo-card">
+        <h3>Demo 7: Трансформація простору (Scaling)</h3>
+        <p>Файл <code>Demo7_Scaling.java</code> демонструє роботу з розмірами. Важлива деталь: я не змінював радіус сфери в аргументах функції. Я змінив масштаб самого простору <code>p</code> перед тим, як передати його у функцію. Це дозволяє деформувати об'єкти, наприклад, перетворити куб на тонку пластину або довгий стовп шляхом простої маніпуляції з вектором координат.</p>
+    </div>
+</div>
+</div>
+
+<hr>
+
+<div class="speech-text">
+<h2>3. Глибока логіка: Маніпуляція доменом (Domain Warp)</h2>
+<p>«У коді ви можете помітити записи на кшталт <code>p - spherePos</code> або <code>p / scale</code>. Це ключова концепція Raymarching — <strong>Domain Transformation</strong> (трансформація домену).</p>
+
+<p>У класичних рушіях (Unity/Unreal) об'єкт має свою "трансформу" (позицію, ротацію). У Raymarching об'єкт завжди знаходиться в центрі координат <code>(0,0,0)</code>. Щоб змістити сферу праворуч, ми не рухаємо сферу, а зміщуємо весь простір для променя, що летить, ліворуч. Ми кажемо променю: "Уяви, що світ змістився".</p>
+
+<h3>Нескінченність без витрат пам'яті (Domain Repetition)</h3>
+<p>Це одна з найбільш вражаючих можливостей. За допомогою операції <code>mod()</code> (залишок від ділення) на векторі <code>p</code> ми можемо "зациклити" простір. Промінь летить вперед, але кожні 5 метрів він математично повертається в точку 0. Результатом є те, що одна-єдина сфера з <code>Demo 1</code> перетворюється на нескінченний ліс сфер, що тягнуться за горизонт.»</p>
+
+<div class="formula-box" style="background: #111; padding: 25px; border-radius: 12px; border: 1px solid #ff6b00; font-family: 'Courier New', monospace; color: #a6e3a1; margin: 20px 0;">
+    // Приклад зациклення простору (Domain Repetition)<br>
+    vec3 spacing = vec3(5.0);<br>
+    vec3 q = mod(p + 0.5 * spacing, spacing) - 0.5 * spacing;<br>
+    return sdSphere(q, 1.0);
+</div>
 </div>
 
 <div class="speech-text">
-    <h2>Zhrnutie fázy modelovania</h2>
-    <p>«Na tomto stupni som vytvoril výkonný nástroj. Pomocou súborov <code>Demo3</code>–<code>Demo7</code> som dokázal, že Raymarching nie je len o kreslení gúľ, ale o plnohodnotnom geometrickom modelovaní. Naučili sme sa spájať tvary, vyrezávať otvory a plynule miešať hmotu.</p>
+<h2>Підсумок фази моделювання</h2>
+<p>«На цьому етапі я створив потужний інструмент. За допомогою файлів <code>Demo3</code>–<code>Demo7</code> я довів, що Raymarching — це не лише про малювання кульок, а про повноцінне геометричне моделювання. Ми навчилися поєднувати форми, вирізати отвори та плавно змішувати матерію.</p>
 
-    <p>Teraz sme matematickými sochármi. Avšak zatiaľ tieto objekty vyzerajú len ako ploché farebné škvrny. Nemajú reálnu váhu, lesk kovu a nevrhajú tiene. Preto v ďalšom bloku urobíme krok od geometrie k skutočnej optike. "Zapneme svetlo" a pomocou gradientov SDF vypočítame <strong>normály</strong> — "zmyslový orgán" objektu, ktorý mu umožňuje vidieť zdroj svetla. Premeníme tieto abstrakcie na reálne materiály pomocou <strong>Phongovho modelu</strong> a naučíme sa vytvárať <strong>Soft Shadows</strong> (mäkké tiene) v reálnom čase.»</p>
+<p>Тепер ми — математичні скульптори. Однак поки що ці об'єкти виглядають лише як плоскі кольорові плями. Вони не мають реальної ваги, блиску металу і не відкидають тіней. Тому в наступному блоці ми зробимо крок від геометрії до справжньої оптики. Ми "увімкнемо світло" і за допомогою градієнтів SDF обчислимо <strong>нормалі</strong> — "орган чуття" об'єкта, який дозволяє йому бачити джерело світла. Ми перетворимо ці абстракції на реальні матеріали за допомогою <strong>моделі Фонга</strong> та навчимося створювати <strong>Soft Shadows</strong> (м'які тіні) в реальному часі.»</p>
 </div>
