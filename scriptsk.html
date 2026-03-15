@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ťahák pre spíkra: Raymarching</title>
+    <style>
+        :root {
+            --bg: #0a0a0c;
+            --accent: #ff6b00; /* Oranžová z hlavnej stránky */
+            --text: #e0e0e0;
+            --card-bg: rgba(22, 22, 26, 0.9);
+            --cue-bg: rgba(255, 107, 0, 0.1); /* Jemný oranžový nádych pre akcie */
+            --cue-text: #ffb380;
+            --gradient: linear-gradient(135deg, #6a5af9, #a855f7, #ec4899);
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.8;
+            font-size: 19px; 
+            color: var(--text);
+            background-color: var(--bg);
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 80px 25px 50px; /* Priestor pre fixné menu */
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            text-align: center;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 50px;
+            padding-bottom: 15px;
+        }
+
+        .block-title {
+            color: var(--accent);
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-top: 60px;
+            margin-bottom: 25px;
+            border-left: 6px solid var(--accent);
+            padding-left: 20px;
+            background: linear-gradient(90deg, rgba(255, 107, 0, 0.1), transparent);
+        }
+
+        /* Akcie pre rečníka (napr. "Prepnúť slide") */
+        .action-cue {
+            background-color: var(--cue-bg);
+            color: var(--cue-text);
+            padding: 15px 25px;
+            border-radius: 12px;
+            font-weight: 700;
+            margin-bottom: 25px;
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid rgba(255, 107, 0, 0.2);
+        }
+
+        /* Bloky textu, ktorý hovoríš */
+        .speech-text {
+            background-color: var(--card-bg);
+            padding: 35px;
+            border-radius: 20px;
+            margin-bottom: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+        }
+
+        .speech-text p {
+            margin-top: 0;
+            margin-bottom: 25px;
+        }
+
+        .speech-text p:last-child {
+            margin-bottom: 0;
+        }
+
+        strong {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        /* Štýl pre obrázky v texte */
+        .img-container {
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .img-container img {
+            max-width: 100%;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        /* Navigácia späť */
+        .back-nav {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+        }
+        
+        .back-nav a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 15px;
+            border-radius: 30px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🎙 Scenár prednášky: Raymarching</h1>
+
+    <div class="block-title">Blok 1. Úvod: Koniec polygónov (~5-7 minút)</div>
+    
+    <div class="action-cue">
+        📺 Na obrazovke: Titulný slide prezentácie
+    </div>
+
+    <div class="speech-text">
+        <p>„Ahojte všetci! Dnes nás čaká veľmi neobvyklá a podľa môjho názoru tá najkrajšia téma v počítačovej grafike.“</p>
+    </div>
+
+    <div class="action-cue">
+        📺 Prepnúť slide: Polygonálna sieť postáv (Wireframe)
+    </div>
+
+    <div class="speech-text">
+        <p>„Poďme si na úvod pripomenúť, ako funguje grafika vo väčšine moderných hier. Či už je to <i>Cyberpunk</i> alebo <i>GTA</i>, všetko, čo vidíte na obrazovke – autá, budovy, postavy – sa skladá z polygonálnej siete (<strong>Polygonal Mesh</strong>). Teda z miliónov drobných plochých trojuholníkov.</p>
+        
+        <p>Grafická karta vezme tieto trojuholníky, premietne ich na obrazovku a vyfarbí ich. Ide o štandardný prístup, ktorý nazývame <strong>Rasterization</strong> (Rasterizácia), a funguje neuveriteľne rýchlo.</p>
+        
+        <p>Dnes sa však vyberieme iným smerom. Úplne túto myšlienku opustíme. Na našej prednáške nepoužijeme <strong>ani jeden trojuholník</strong>, žiadny vrchol (<strong>Vertex</strong>) a žiadny 3D model načítaný z externých programov. Použijeme iný prístup — <strong>Raymarching</strong> (Pochodovanie lúčov).</p>
+        
+        <p>Aby sme pochopili jeho podstatu, porovnajme ho s klasickým <strong>Ray Tracingom</strong> (Sledovaním lúčov), o ktorom ste už určite počuli.“</p>
+    </div>
+
+    <div class="action-cue">
+        📺 Prepnúť slide: Rozdiel v prístupoch (Ray Tracing vs Raymarching)
+    </div>
+
+    
+
+    <div class="speech-text">
+        <p>„V klasickom <strong>Ray Tracingu</strong> vysielame lúč z virtuálnej kamery priamo do pixelu na obrazovke a zisťujeme, kam v 3D svete dopadne. Náš algoritmus hľadá <strong>presný analytický priesečník</strong> (<strong>Analytical Intersection</strong>) lúča s povrchom. Počítač v podstate rieši prísne matematické rovnice – napríklad rovnicu prieniku priamky a roviny.</p>
+        
+        <p>Znie to skvele, ale táto metóda má jednu veľkú nevýhodu. Sme silne obmedzení. Dokážeme zobraziť len tie povrchy, pre ktoré sme schopní túto matematickú rovnicu prieniku vyriešiť.</p>
+        
+        <p>Ak máte v scéne jednoduchú plochú stenu alebo ideálnu guľu – rovnica sa rieši ľahko. Ale čo ak chcete vykresliť nekonečný fraktál? Alebo špongiu? Alebo sliz, ktorý kvapká zo stropu a plynule sa zlieva s podlahou? Vyriešiť presnú rovnicu prieniku pre takéto zložité organické tvary analyticky je prakticky nemožné.</p>
+        
+        <p>A tu prichádza mágia <strong>Raymarchingu</strong>. Meníme samotnú filozofiu toho, ako opisujeme svet okolo nás.</p>
+        
+        <p>Namiesto hľadania presného bodu prieniku pomocou zložitého vzorca opisujeme celú našu scénu ako <strong>Distance Field</strong> (Pole vzdialeností).</p>
+        
+        <p>Čo to znamená? Predstavte si, že priestor okolo nás nie je prázdnota s objektmi, ale matematické pole. A každý bod v tomto priestore vie len jednu vec: "Aká je najkratšia vzdialenosť odo mňa k najbližšiemu pevnému objektu?".</p>
+        
+        <p>Raymarching nám umožňuje zobraziť akýkoľvek povrch, ak ho vieme definovať jednoduchým výrazom, napríklad $f(x, y, z) = 0$. Ak vieme objekt opísať vzorcom – vieme ho nakresliť! Nemusíme v pamäti uchovávať milióny trojuholníkov. Celá scéna je proste čistá matematika.</p>
+        
+        <p>Práve tento prístup využívajú programátori na <strong>Demoscénach</strong>, keď vytvárajú celé 3D svety s veľkosťou len 4 kilobajty. Umožňuje to vytvárať nekonečné procedurálne krajiny (<strong>Procedural Landscapes</strong>), mäkké tiene (<strong>Soft Shadows</strong>) bez artefaktov a topiace sa, prelievajúce sa objekty.</p>
+        
+        <p>A dnes nebudeme študovať len teóriu. Na konci prednášky spolu napíšeme od úplného základu skutočnú 3D Lávovú lampu, pričom použijeme iba kód a matematiku.“</p>
+    </div>
+
+</body>
+</html>

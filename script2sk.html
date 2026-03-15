@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="sk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speaker Notes: Raymarching Deep Dive</title>
+    <style>
+    :root {
+        --bg: #0a0a0c;
+        --accent: #ff6b00; /* Tvoja hlavná oranžová */
+        --text: #e0e0e0;
+        --card-bg: rgba(22, 22, 26, 0.9);
+        --cue-bg: rgba(255, 107, 0, 0.1); 
+        --cue-text: #ffb380;
+        --code-color: #a6e3a1; /* Zelená pre kód */
+        --formula-bg: #000000;
+        --gradient: linear-gradient(135deg, #6a5af9, #a855f7, #ec4899);
+    }
+
+    body {
+        font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
+        line-height: 1.8;
+        font-size: 21px; 
+        color: var(--text);
+        background-color: var(--bg);
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 80px 25px 50px;
+        animation: fadeIn 0.8s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(15px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1 {
+        font-size: 3.2rem;
+        font-weight: 800;
+        text-align: center;
+        background: var(--gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 50px;
+        padding-bottom: 20px;
+    }
+
+    .block-title {
+        color: var(--accent);
+        font-size: 1.8em;
+        font-weight: 700;
+        margin-top: 70px;
+        margin-bottom: 30px;
+        border-left: 8px solid var(--accent);
+        padding-left: 20px;
+        background: linear-gradient(90deg, rgba(255, 107, 0, 0.15), transparent);
+    }
+
+    .action-cue {
+        background-color: var(--cue-bg);
+        color: var(--cue-text);
+        padding: 20px;
+        border-radius: 12px;
+        font-weight: bold;
+        margin-bottom: 30px;
+        font-size: 0.9em;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        border-left: 4px solid var(--accent);
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .speech-text {
+        background-color: var(--card-bg);
+        padding: 40px;
+        border-radius: 20px;
+        margin-bottom: 40px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+    }
+
+    .speech-text p { margin-bottom: 25px; }
+
+    /* Štýlový box pre matematické vzorce */
+    .formula-box {
+        background-color: var(--formula-bg);
+        padding: 30px;
+        border-radius: 15px;
+        text-align: center;
+        margin: 35px 0;
+        border: 1px solid var(--accent);
+        box-shadow: 0 0 20px rgba(255, 107, 0, 0.15);
+        color: #fff;
+    }
+
+    /* Zvýraznenie kódu v texte */
+    .code-snippet {
+        color: var(--code-color);
+        font-family: 'Fira Code', 'Consolas', monospace;
+        background: rgba(0, 0, 0, 0.5);
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 0.9em;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .img-container {
+        margin: 40px 0;
+        text-align: center;
+    }
+
+    .img-container img {
+        max-width: 100%;
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+    }
+
+    strong { color: var(--accent); }
+    em { color: #f9e2af; font-style: normal; font-weight: bold; } /* Zvýraznenie kľúčových slov */
+    
+    /* Navigácia späť */
+    .back-nav {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 1000;
+    }
+    
+    .back-nav a {
+        color: var(--text);
+        text-decoration: none;
+        font-weight: 600;
+        background: rgba(22, 22, 26, 0.8);
+        padding: 10px 20px;
+        border-radius: 30px;
+        backdrop-filter: blur(5px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        font-size: 0.9rem;
+        transition: 0.3s;
+    }
+
+    .back-nav a:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+    }
+</style>
+</head>
+
+<body>
+
+    <h1>🎙 Scenár prednášky: Raymarching</h1>
+
+    <div class="block-title">Blok 2. Matematika neviditeľného: SDF, Maršovanie a Normály (~20 minút)</div>
+
+    <div class="img-container">
+        <a href="assets/image.png" target="_blank">
+            <img src="assets/image.png" alt="SDF Sphere Logic">
+        </a>
+    </div>
+
+    <div class="speech-text">
+        <p>„Predtým, než vyšleme lúče do nášho virtuálneho sveta, musíme pochopiť, ako tento svet popisujeme. Vzdávame sa polygónov v prospech <strong>SDF (Signed Distance Functions)</strong> — znamienkových funkcií vzdialenosti. Toto je základ všetkého, čo uvidíte ďalej.</p>
+        
+        <p>Predstavte si, že priestor nie je prázdnota, ale informačné pole. Každý bod v ňom presne pozná vzdialenosť k najbližšiemu objektu. Ak vezmeme najjednoduchší tvar — sféru (<strong>Sphere</strong>), jej popis sa zmení na elegantný vzorec:</p>
+
+        <div class="img-container">
+            <p style="color: var(--accent-color); font-weight: bold; margin-bottom: 15px;">
+                Matematická definícia SDF sféry:
+            </p>
+            <a href="assets/formula.png" target="_blank">
+                <img src="assets/formula.png" alt="SDF Formula and Logic" style="max-width: 500px; border: 2px solid var(--accent-color);">
+            </a>
+            <p style="font-size: 0.9em; color: #a6e3a1; margin-top: 10px;">
+                (Vzdialenosť od stredu k bodu mínus polomer)
+            </p>
+        </div>
+
+        <p>Prečo je funkcia <em>"Signed"</em> (znamienková)? Pozrite sa na obrazovku. Hodnota <strong>d</strong> nám hovorí všetko o polohe bodu:
+            <ul>
+                <li>Ak <strong>d > 0</strong>: Bod sa nachádza vonku (<strong>Outside</strong>). Sme vo voľnom priestore.</li>
+                <li>Ak <strong>d < 0</strong>: Sme vo vnútri (<strong>Inside</strong>) objektu. Je to "pevná" hmota.</li>
+                <li>Ak <strong>d = 0</strong>: Gratulujem, stojíte presne na povrchu (<strong>Surface</strong>).</li>
+            </ul>
+        </p>
+        <p>Pre grafickú kartu (<strong>GPU</strong>) je to ideálne: namiesto miliónov súradníc vrcholov (vertices) posielame jednu matematickú inštrukciu. To nám dáva <strong>nekonečnú detailnosť</strong> — na našej sfére nikdy neuvidíte ostré hrany polygónov.“</p>
+    </div>
+
+    <div class="img-container">
+        <a href="assets/image1.png" target="_blank">
+            <img src="assets/image1.png" alt="SDF Sphere Logic">
+        </a>
+    </div>
+
+    <div class="speech-text">
+        <p>„Dobre, máme vzorec. Ale ako ho premeniť na pixely na obrazovke? Tu prichádza na rad algoritmus <strong>Sphere Tracing</strong> (Maršovanie sfér).</p>
+        
+        <p>Pozrite sa na hornú schému. V bežnom ray tracingu hľadáme priesečník (intersection) analyticky. V Raymarching-u pôsobíme ako nevidiaci človek s palicou, ale veľmi inteligentnou palicou. Z kamery vyletí lúč (<strong>Ray</strong>). V počiatočnom bode sa opýtame našej SDF: 'Aká je vzdialenosť k najbližšiemu objektu?'.</p>
+
+        <p>Ak je odpoveď 5 metrov — získavame <strong>Safe Zone</strong> (<em>'Bezpečnú zónu'</em>). Pozrite sa na tie modré kruhy na slajde. V rádiuse tohto kruhu sa garantovane nič nenachádza. Môžeme okamžite preskočiť (<strong>Step</strong>) týchto 5 metrov. V novom bode sa znova opýtame na vzdialenosť a znova skočíme.</p>
+
+        <p>Všimnite si druhý obrázok. Vidíte, ako sa kroky stávajú maličkými priamo pri povrchu? Algoritmus je <strong>adaptívny</strong>: letí obrovskou rýchlosťou v prázdnom priestore a 'spomalí' na mikroskopickú presnosť, keď sa priblíži k objektu. To nám umožňuje nájsť povrch s presnosťou na 0,001 milimetra.“</p>
+    </div>
+
+    <div class="img-container">
+        <a href="assets/codeimage.png" target="_blank">
+            <img src="assets/codeimage.png" alt="SDF Sphere Logic">
+        </a>
+    </div>
+
+    <div class="speech-text">
+        <p>„Teraz prenesieme túto logiku do kódu. Otvorte metódu <span class="code-snippet">raymarch</span>. Vo vnútri vidíte cyklus <span class="code-snippet">for</span>. To sú naše 'skoky'. Ale aby grafická karta nezhorela pri pokuse nájsť nekonečno, máme tri prísne podmienky ukončenia (<strong>Exit Conditions</strong>):</p>
+
+        <p>
+            1. <strong>Zásah (Hit):</strong> Ak <span class="code-snippet">d < EPSILON</span> (0,001). Prišli sme tak blízko, že to považujeme za dotyk. Vraciame prejdenú dráhu <strong>t</strong>.<br>
+            2. <strong>Minutie (Miss):</strong> Ak <span class="code-snippet">t > MAX_DIST</span>. Lúč odletel do otvoreného vesmíru. Vykreslíme pozadie.<br>
+            3. <strong>Limit:</strong> Dosiahli sme <span class="code-snippet">MAX_STEPS</span> (napr. 128). To je naša poistka, aby sa lúč nezasekol v nekonečných výpočtoch medzi objektmi.
+        </p>
+    </div>
+
+    <div class="img-container">
+        <a href="assets/normala.png" target="_blank">
+            <img src="assets/normala.png" alt="SDF Sphere Logic">
+        </a>
+    </div>
+
+    <div class="speech-text">
+        <p>„Ak by sme teraz spustili kód, videli by sme plochý biely kruh. Prečo? Pretože sme našli bod dotyku, ale nevieme, ako je naklonený. Nevieme, kde má objekt 'vrch' a kde 'bok'. Potrebujeme <strong>Normály (Normals)</strong>.</p>
+        
+        <p>V Raymarching-u existuje magický spôsob, ako nájsť normálu bez znalosti geometrie. Používame <strong>Gradient</strong>. Pozrite sa na vzorec na vašom skríne. Vezmeme bod dotyku a o maličký kúsok (o 0,001) sa posunieme doprava, hore a vpred.</p>
+
+        <div class="formula-box">
+            <span style="font-size: 1.2em;">$$n = \text{normalize}(\text{map}(p + \epsilon) - \text{map}(p - \epsilon))$$</span>
+        </div>
+
+        <p>Porovnávame: 'Zväčšila sa alebo zmenšila vzdialenosť pri tomto posune?'. Tento rozdiel je vektorom smeru povrchu. Metóda <span class="code-snippet">getNormal</span> v kóde robí presne to: 'ohmatáva' priestor okolo bodu dotyku a vypočítava, kam smeruje povrch (<strong>face</strong>) objektu. Teraz sme pripravení nasmerovať tam svetlo a uvidieť skutočný objem!“</p>
+    </div>
+
+    <div class="img-container">
+        <a href="assets/Sphera.png" target="_blank">
+            <img src="assets/Sphera.png" alt="SDF Sphere Logic">
+        </a>
+    </div>
+
+    <div class="speech-text">
+        <p>„Pozrite sa na výsledok. Vďaka normálam, ktoré sme vypočítali z čistej matematiky, svetlo dopadá na sféru ideálne. Získali sme plnohodnotný 3D objekt bez toho, aby sme nakreslili jediný trojuholník. Ale sféra je len začiatok. V ďalšom bloku ju rozhýbeme a spojíme s inými tvarmi pomocou <strong>matematiky spájania</strong> (Boolean operations).“</p>
+    </div>
+
+</body>
+
+</html>

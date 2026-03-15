@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inštrukcie: Príprava na prednášku o Raymarching</title>
+    <link rel="stylesheet" href="css/style.css">
+    
+</head>
+<body>
+
+    <h1>🛠 Príprava na prednášku o Raymarching</h1>
+    
+    <p>Ahojte! Na ďalšom cvičení budeme písať vlastný 3D render od nuly, pričom využijeme len matematiku a grafickú kartu. Aby sme stihli vytvoriť peknú animovanú „Lávovú lampu“, pripravte si prosím pracovné prostredie <strong>ešte pred začiatkom hodiny</strong>.</p>
+    <p>Zaberie to približne 10-15 minút.</p>
+
+    <div class="step">
+        <h2>Krok 1. Inštalácia základného softvéru</h2>
+        <p>Ak už máte nainštalovanú Javu a vývojové prostredie, tento krok môžete preskočiť.</p>
+        <ol>
+            <li>Uistite sa, že máte nainštalovaný <strong>Java Development Kit (JDK)</strong> verzie 17 alebo novšej.</li>
+            <li>Stiahnite si a nainštalujte <strong>IntelliJ IDEA</strong> (postačí bezplatná Community Edition).</li>
+        </ol>
+    </div>
+
+    <div class="step">
+        <h2>Krok 2. Príprava knižnice LWJGL (OpenGL)</h2>
+        <p>Pre prácu s grafikou budeme používať knižnicu LWJGL.</p>
+        <ol>
+            <li>Stiahnite si archív s knižnicami z tohto odkazu: <a href="https://drive.google.com/file/d/1MGSgDnGNaG5M9YTiz0OqLA6hWV-8X0qz/view?usp=sharing" style="color: var(--accent-color);" target="_blank">[Odkaz na stiahnutie archívu]</a></li>
+            <li>Rozbaľte priečinok na vhodné miesto vo vašom počítači (napríklad <code>C:\LWJGL</code>). <br><span class="highlight">Dôležité:</span> cesta k priečinku nesmie obsahovať diakritiku (mäkčene, dĺžne) ani cyriliku!</li>
+        </ol>
+    </div>
+
+    <div class="step">
+        <h2>Krok 3. Vytvorenie projektu v IntelliJ IDEA</h2>
+        <ol>
+            <li>Otvorte IntelliJ IDEA a kliknite na <strong>New Project</strong>.</li>
+            <li>V ľavom menu vyberte <strong>New Project</strong> (obyčajný Java projekt, bez Maven/Gradle).</li>
+            <li>Zadajte názov projektu, napríklad <code>RaymarchingLavaLamp</code>.</li>
+            <li>Uistite sa, že v poli <strong>Language</strong> je vybraná Java, a v poli <strong>Build system</strong> — IntelliJ.</li>
+            <li>Kliknite na <strong>Create</strong>.</li>
+        </ol>
+    </div>
+
+    <div class="step">
+        <h2>Krok 4. Pripojenie knižnice k projektu</h2>
+        <p>Nepotrebujeme všetky moduly zo stiahnutého priečinka, stačia nám len tri základné:</p>
+        <ol>
+            <li>V hornom menu IDEA vyberte <code>File -> Project Structure</code> (alebo stlačte <code>Ctrl + Alt + Shift + S</code>).</li>
+            <li>V ľavom stĺpci vyberte sekciu <strong>Modules</strong>, potom prejdite na kartu <strong>Dependencies</strong>.</li>
+            <li>Kliknite na ikonu <strong>+</strong> (plus) a vyberte <strong>JARs or directories...</strong></li>
+            <li>V otvorenom okne nájdite váš rozbalený priečinok <code>lwjgl-3.3.6</code>. Vojdite doň a označte súbory <code>.jar</code> <strong>LEN z týchto troch priečinkov</strong> (označte aj obyčajné súbory, aj tie s príponou <code>natives</code>):
+                <ul>
+                    <li>📁 <code>lwjgl</code></li>
+                    <li>📁 <code>lwjgl-glfw</code></li>
+                    <li>📁 <code>lwjgl-opengl</code></li>
+                </ul>
+            </li>
+            <li>Kliknite na <code>OK</code>, potom <code>Apply</code> a znova <code>OK</code>.</li>
+        </ol>
+    </div>
+
+    <div class="step">
+        <h2>Krok 5. Testovací kód</h2>
+        <p>Poďme sa uistiť, že všetko funguje správne.</p>
+        <ol>
+            <li>V priečinku <code>src</code> vášho projektu vytvorte novú Java triedu s názvom <code>PracticeTask</code>.</li>
+            <li>Skopírujte a vložte do nej nasledujúci kód:</li>
+        </ol>
+<pre><code>import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWErrorCallback;
+
+public class PracticeTask {
+    public static void main(String[] args) {
+        // Nastavenie výpisu chýb do konzoly
+        GLFWErrorCallback.createPrint(System.err).set();
+
+        // Pokus o inicializáciu GLFW
+        if (!GLFW.glfwInit()) {
+            throw new IllegalStateException("Chyba: Nepodarilo sa inicializovať GLFW. Skontrolujte pripojenie knižníc!");
+        }
+
+        System.out.println("Hurá! Knižnica LWJGL je úspešne pripojená a funguje.");
+        
+        // Ukončenie práce
+        GLFW.glfwTerminate();
+    }
+}</code></pre>
+    </div>
+
+    <div class="mac-warning">
+        <h3>🚨 Krok 6. DÔLEŽITÉ pre majiteľov Mac (macOS)</h3>
+        <p><em>Používatelia systémov Windows a Linux môžu tento krok preskočiť.</em></p>
+        <p>Architektúra macOS vyžaduje, aby grafické okná boli vytvorené v hlavnom vlákne (main thread). Ak kód spustíte len tak, dostanete chybu <code>GLFW may only be used on the main thread</code>.</p>
+        <ol>
+            <li>V pravom hornom rohu IDEA kliknite na rozbaľovací zoznam <code>PracticeTask</code> a vyberte <strong>Edit Configurations...</strong></li>
+            <li>Nájdite pole <strong>VM options</strong>. Ak tam nie je: kliknite na <em>Modify options</em> (alebo na ikonu ozubeného kolesa) -> vyberte <em>Add VM options</em>.</li>
+            <li>Napíšte tam presne jeden riadok: <br><code style="background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 4px;">-XstartOnFirstThread</code></li>
+            <li>Kliknite na <strong>Apply</strong> a potom <strong>OK</strong>.</li>
+        </ol>
+    </div>
+
+    <div class="step" style="background-color: #2a3a3a; border-left: 5px solid #a6e3a1;">
+        <h2>Krok 7. Spustenie!</h2>
+        <p>Spustite kód (zelený trojuholník vedľa metódy <code>main</code>).</p>
+        <p>Ak sa v konzole (v spodnej časti obrazovky) zobrazí správa <strong>«Hurá! Knižnica LWJGL je úspešne pripojená a funguje.»</strong> — ste plne pripravení na hodinu!</p>
+    </div>
+
+</body>
+</html>

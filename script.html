@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Шпаргалка спикера: Raymarching</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        :root {
+            --bg: #0a0a0c;
+            --accent: #ff6b00; /* Oranžová z hlavnej stránky */
+            --text: #e0e0e0;
+            --card-bg: rgba(22, 22, 26, 0.9);
+            --cue-bg: rgba(255, 107, 0, 0.1); /* Jemný oranžový nádych pre akcie */
+            --cue-text: #ffb380;
+            --gradient: linear-gradient(135deg, #6a5af9, #a855f7, #ec4899);
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.8;
+            font-size: 19px; 
+            color: var(--text);
+            background-color: var(--bg);
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 80px 25px 50px; /* Priestor pre fixné menu */
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            text-align: center;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 50px;
+            padding-bottom: 15px;
+        }
+
+        .block-title {
+            color: var(--accent);
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-top: 60px;
+            margin-bottom: 25px;
+            border-left: 6px solid var(--accent);
+            padding-left: 20px;
+            background: linear-gradient(90deg, rgba(255, 107, 0, 0.1), transparent);
+        }
+
+        /* Akcie pre rečníka (napr. "Prepnúť slide") */
+        .action-cue {
+            background-color: var(--cue-bg);
+            color: var(--cue-text);
+            padding: 15px 25px;
+            border-radius: 12px;
+            font-weight: 700;
+            margin-bottom: 25px;
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid rgba(255, 107, 0, 0.2);
+        }
+
+        /* Bloky textu, ktorý hovoríš */
+        .speech-text {
+            background-color: var(--card-bg);
+            padding: 35px;
+            border-radius: 20px;
+            margin-bottom: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+        }
+
+        .speech-text p {
+            margin-top: 0;
+            margin-bottom: 25px;
+        }
+
+        .speech-text p:last-child {
+            margin-bottom: 0;
+        }
+
+        strong {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        /* Štýl pre obrázky v texte */
+        .img-container {
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .img-container img {
+            max-width: 100%;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        /* Navigácia späť */
+        .back-nav {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+        }
+        
+        .back-nav a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 15px;
+            border-radius: 30px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🎙 Сценарий лекции: Raymarching</h1>
+
+    <div class="block-title">Блок 1. Введение: Отказ от полигонов (~5-7 минут)</div>
+    
+    <div class="action-cue">
+        📺 На экране: Титульный слайд презентации
+    </div>
+
+    <div class="speech-text">
+        <p>«Всем привет! Сегодня у нас с вами очень необычная и, на мой взгляд, самая красивая тема в компьютерной графике.»</p>
+    </div>
+
+    <div class="action-cue">
+        📺 Переключить слайд: Полигональная сетка персонажей (Wireframe)
+    </div>
+
+    <div class="speech-text">
+        <p>«Давайте для начала вспомним, как работает графика в большинстве современных игр. Будь то <i>Cyberpunk</i> или <i>GTA</i>, всё, что вы видите на экране — машины, здания, персонажи — состоит из сетки полигонов. То есть из миллионов крошечных плоских треугольников. Видеокарта берет эти треугольники, проецирует их на экран и закрашивает. Это стандартный подход, который называется растеризацией, и он работает невероятно быстро.</p>
+        
+        <p>Но сегодня мы сделаем шаг в сторону. Мы полностью откажемся от этой идеи. На нашей лекции мы не будем использовать <strong>ни единого треугольника</strong>, ни одной вершины и ни одной 3D-модели, загруженной из сторонних программ. Мы будем использовать другой подход — <strong>Raymarching</strong> (Марширование лучей).</p>
+        
+        <p>Чтобы понять, в чем его суть, давайте сравним его с классическим Ray Tracing (Трассировкой лучей), о котором вы наверняка слышали.»</p>
+    </div>
+
+    <div class="action-cue">
+        📺 Переключить слайд: Разница подходов (Ray Tracing vs Raymarching)
+    </div>
+
+    <div class="speech-text">
+        <p>«В классическом рейтрейсинге мы выпускаем луч из виртуальной камеры прямо в пиксель экрана и смотрим, куда он попадет в 3D-мире. Наш алгоритм ищет <strong>точное аналитическое пересечение</strong> луча с поверхностью. По сути, компьютер решает строгие математические уравнения — например, уравнение пересечения линии и плоскости.</p>
+        
+        <p>Это звучит круто, но у этого метода есть огромный минус. Мы жестко ограничены. Мы можем отобразить только те поверхности, для которых мы вообще способны решить это математическое уравнение пересечения.</p>
+        
+        <p>Если у вас в сцене простая плоская стена или идеальная сфера — уравнение решается легко. Но что, если вы хотите нарисовать бесконечный фрактал? Или губку? Или слизь, которая капает с потолка и плавно сливается с полом? Решить точное уравнение пересечения для таких сложных, органических форм аналитически — практически невозможно.</p>
+        
+        <p>И вот здесь на сцену выходит магия <strong>Raymarching</strong>. Мы меняем саму философию того, как мы описываем мир вокруг нас.</p>
+        
+        <p>Вместо того чтобы искать точную точку пересечения с помощью сложной формулы, мы описываем всю нашу сцену как <strong>Distance Field</strong> (Поле расстояний).</p>
+        
+        <p>Что это значит? Представьте, что пространство вокруг нас — это не пустота с объектами, а математическое поле. И каждая точка в этом пространстве знает только одно: "Какое кратчайшее расстояние от меня до ближайшего твердого объекта?".</p>
+        
+        <p>Raymarching позволяет нам отобразить любую поверхность, если мы можем задать её простым выражением, например $f(x, y, z) = 0$. Если мы можем описать объект формулой — мы можем его нарисовать! Нам не нужно хранить в памяти миллионы треугольников. Вся сцена — это просто математика.</p>
+        
+        <p>Именно этот подход используется программистами на демосценах, когда они создают целые 3D-миры размером всего в 4 килобайта. Это позволяет делать бесконечные процедурные ландшафты, мягкие тени без "лесенок" и плавящиеся, перетекающие объекты.</p>
+        
+        <p>И сегодня мы не просто изучим эту теорию. В конце лекции мы вместе напишем с нуля настоящую 3D Лава-лампу, используя только код и математику.»</p>
+    </div>
+
+    </body>
+</html>

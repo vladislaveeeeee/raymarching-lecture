@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Шпаргалка спикера: Raymarching</title>
+    <link rel="stylesheet" href="css/style.css">
+   <style>
+        :root {
+            --bg: #0a0a0c;
+            --accent: #ff6b00; /* Tvoja hlavná oranžová */
+            --text: #e0e0e0;
+            --card-bg: rgba(22, 22, 26, 0.9);
+            --cue-bg: rgba(255, 107, 0, 0.1); 
+            --cue-text: #ffb380;
+            --gradient: linear-gradient(135deg, #6a5af9, #a855f7, #ec4899);
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.8;
+            font-size: 19px; 
+            color: var(--text);
+            background-color: var(--bg);
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 80px 25px 50px;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            text-align: center;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 50px;
+        }
+
+        .block-title {
+            color: var(--accent);
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-top: 60px;
+            margin-bottom: 25px;
+            border-left: 6px solid var(--accent);
+            padding-left: 20px;
+            background: linear-gradient(90deg, rgba(255, 107, 0, 0.1), transparent);
+        }
+
+        /* 📺 Inštrukcie pre rečníka (prepnúť slide a pod.) */
+        .action-cue {
+            background-color: var(--cue-bg);
+            color: var(--cue-text);
+            padding: 15px 25px;
+            border-radius: 12px;
+            font-weight: 700;
+            margin-bottom: 25px;
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid rgba(255, 107, 0, 0.2);
+        }
+
+        /* 🎙 Hlavné bloky reči */
+        .speech-text {
+            background-color: var(--card-bg);
+            padding: 35px;
+            border-radius: 20px;
+            margin-bottom: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+        }
+
+        .speech-text h2 {
+            color: var(--accent);
+            font-size: 1.5rem;
+            margin-top: 0;
+            border-bottom: 1px solid rgba(255, 107, 0, 0.2);
+            padding-bottom: 10px;
+        }
+
+        .speech-text p {
+            margin-bottom: 20px;
+        }
+
+        .speech-text ul {
+            padding-left: 20px;
+        }
+
+        .speech-text li {
+            margin-bottom: 10px;
+        }
+
+        /* 📦 Karty pre Demo ukážky */
+        .demo-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .demo-card:hover {
+            transform: scale(1.02);
+            border-color: var(--accent);
+        }
+
+        .demo-card h3 {
+            color: var(--accent);
+            margin-top: 15px;
+            font-size: 1.2rem;
+        }
+
+        /* 🔢 Vzorce a kódové bloky */
+        .formula-box {
+            background: #000;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid var(--accent);
+            font-family: 'Fira Code', monospace;
+            color: #a6e3a1;
+            margin: 20px 0;
+            box-shadow: inset 0 0 10px rgba(255, 107, 0, 0.1);
+        }
+
+        strong {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        /* Navigácia */
+        .back-nav {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+        }
+        
+        .back-nav a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 600;
+            background: rgba(22, 22, 26, 0.8);
+            padding: 8px 15px;
+            border-radius: 30px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+
+<div class="block-title">Blok 3. Sochárstvo matematikou: Logické operácie, transformácie a nekonečné svety</div>
+
+<div class="speech-text">
+    <p>„Dostali sme sa k najfascinujúcejšej časti môjho projektu. Do tohto momentu sme sa naučili zobraziť jednu sféru a vypočítať pre ňu základné osvetlenie. Ale <strong>Raymarching</strong> sa stáva skutočnou mágiou až vtedy, keď prejdeme k procedurálnemu modelovaniu. Na rozdiel od klasickej počítačovej grafiky, kde sa objekty skladajú z miliónov polygónov, v mojom projekte je každý objekt iba matematickou rovnicou.</p>
+
+    <p>Tu nenájdete žiadne vrcholy (vertices), hrany ani textúrové mapovanie. Namiesto toho, aby sme kreslili povrch, pýtame sa priestoru: 'Čo sa tu nachádza?'. Tento prístup sa nazýva <strong>CSG (Constructive Solid Geometry)</strong>. Je to metóda budovania zložitých telies z najjednoduchších primitívov pomocou logických operácií. Práve o tom budeme hovoriť ďalej: ako som premenil matematické vzorce na nástroje digitálneho sochára.“</p>
+</div>
+
+<div class="speech-text">
+    <h2>1. Teoretická báza: Štyri metódy manipulácie s formou</h2>
+    <p>„Skôr než otvoríme kód, je dôležité pochopiť, s akými nástrojmi operujem. Keďže každý bod priestoru pozná vzdialenosť k najbližšiemu objektu cez <strong>SDF (Signed Distance Function)</strong>, môžeme s týmito vzdialenosťami manipulovať pomocou elementárnej logiky.</p>
+
+    <ul>
+        <li><strong>Union (Zjednotenie):</strong> Je to proces spojenia dvoch telies. Ak máme kocku a sféru, môžeme prinútiť grafickú kartu, aby ich vnímala ako jeden objekt. Matematicky ide o výber minimálnej hodnoty z dvoch funkcií vzdialenosti.</li>
+        <li><strong>Subtraction (Odčítanie):</strong> Jeden objekt sa stáva 'formou' pre druhý. Predstavte si, že vtlačíte kovovú guľu do kusu teplého vosku – zostane tam dokonalý odtlačok. V <strong>Raymarching</strong> sa to robí cez inverziu znamienka jednej zo vzdialeností.</li>
+        <li><strong>Intersection (Prienik):</strong> Táto operácia ponechá iba tú časť priestoru, kde sa dva objekty prekrývajú. To umožňuje vytvárať mimoriadne detailné mechanické súčiastky alebo hrany.</li>
+        <li><strong>Scaling (Škálovanie):</strong> Nie je to len zmena veľkosti. Môžeme dynamicky 'stláčať' alebo 'rozťahovať' samotný priestor, čím meníme proporcie objektov v reálnom čase bez straty ich matematickej presnosti.“</li>
+    </ul>
+</div>
+
+<hr>
+
+<div class="speech-text">
+    <h2>2. Od teórie k praxi: Evolúcia kódu v Demo súboroch</h2>
+    <p>„Moja cesta vývoja bola rozdelená na etapy, z ktorých každá pridávala novú matematickú možnosť. Poďme si rozobrať každý súbor detailne.“</p>
+
+    <div class="img-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+        <div class="demo-card">
+            <img src="assets/union.png" alt="Demo 3 - Union" style="width: 100%; border-radius: 10px;">
+            <h3>Demo 3: Tvrdé zjednotenie (Union)</h3>
+            <p>V súbore <code>Demo3_SphereAndBox.java</code> som prvýkrát spojil dve rôzne geometrie. V metóde <code>map()</code> som vypočítal vzdialenosť k sfére a kocke samostatne a potom som použil funkciu <code>min(sphere, box)</code>. Ako vidíte na snímke obrazovky, vytvára to dokonale ostrý spoj. Grafická karta jednoducho porovnáva dve čísla: 'Ktorý objekt je v tomto bode bližšie ku kamere?'. Toto je fundamentálny princíp <strong>CSG</strong> modelovania.</p>
+        </div>
+
+        <div class="demo-card">
+            <img src="assets/smoothUnion.png" alt="Demo 4 - Smooth Union" style="width: 100%; border-radius: 10px;">
+            <h3>Demo 4: Mágia Smooth Minimum</h3>
+            <p>Tvrdé spoje vyzerajú umelo. Preto som v súbore <code>Demo4_SmoothUnion.java</code> implementoval jednu z najsilnejších funkcií <strong>Raymarchingu</strong> — <strong>Smooth Minimum (smin)</strong>. Na snímke vidíte, ako sféra a kocka akoby 'spletaujú', čím vytvárajú plynulý mostík. To imituje povrchové napätie kvapalín alebo organiku (svaly, kožu). Matematicky nielen vyberáme minimum, ale pridávame koeficient vyhladzovania, ktorý mieša polia vzdialeností.</p>
+        </div>
+
+        <div class="demo-card">
+            <img src="assets/sub.png" alt="Demo 6 - Subtraction" style="width: 100%; border-radius: 10px;">
+            <h3>Demo 6: Matematické odčítanie (Subtraction)</h3>
+            <p><code>Demo6_Subtraction.java</code> demonštruje pokročilú prácu s geometriou. Na novej snímke vidíme nie jednoduchý rez, ale **dutú kocku**, v ktorej je vyrezaný otvor. To sa dosahuje použitím absolútnej hodnoty (<code>abs</code>) funkcie vzdialenosti, čo premieňa plné teleso na tenkú škrupinu. Spojenie tejto techniky s odčítaním sféry (<code>max(-sphere, box)</code>) vytvára zložitú architektonickú formu bez potreby zložitej vnútornej topológie siete.</p>
+        </div>
+
+        <div class="demo-card">
+            <img src="assets/scaling.png" alt="Demo 7 - Scaling" style="width: 100%; border-radius: 10px;">
+            <h3>Demo 7: Škálovanie priestoru</h3>
+            <p>Súbor <code>Demo7_Scaling.java</code> demonštruje prácu s rozmermi. Dôležitý detail: nezmenil som polomer sféry v argumentoch funkcie. Zmenil som mierku samotného priestoru <code>p</code> predtým, než som ho odovzdal funkcii. To umožňuje vytvárať efekty deformácie, napríklad premenu kocky na tenkú platňu alebo dlhý stĺp, jednoduchou manipuláciou s vektorom súradníc.</p>
+        </div>
+    </div>
+</div>
+
+<hr>
+
+<div class="speech-text">
+    <h2>3. Hlboká logika: Manipulácia s doménou</h2>
+    <p>„V mojom kóde ste si mohli všimnúť zápisy ako <code>p - spherePos</code> alebo <code>p / scale</code>. Toto je kľúčový koncept <strong>Raymarchingu</strong> — <strong>Domain Transformation</strong>.</p>
+    
+    <p>V klasických enginoch (ako Unity alebo Unreal) má objekt svoju 'transformáciu' (pozíciu, rotáciu). V <strong>Raymarching</strong> sa objekt vždy nachádza v centre súradníc <code>(0,0,0)</code>. Aby sme posunuli sféru o 5 jednotiek doprava, nehýbeme sférou. Hýbeme celým priestorom o 5 jednotiek doľava pre letiaci lúč. Hovoríme lúču: 'Predstav si, že svet sa posunul'.</p>
+
+    <h3>Nekonečno bez nákladov na pamäť (Domain Repetition)</h3>
+    <p>Toto je pravdepodobne najpôsobivejšia možnosť, ktorú som implementoval. Pomocou operácie <code>mod()</code> (zvyšok po delení) na vektore <code>p</code> môžeme priestor zacykliť. Lúč letí vpred, ale každých 5 metrov sa matematicky vracia do bodu 0. Výsledok — jedna jediná sféra z <code>Demo 1</code> sa premení na nekonečný les sfér siahajúci až za horizont.</p>
+
+    <div class="formula-box" style="background: #111; padding: 25px; border-radius: 12px; border: 1px solid var(--accent-color); font-family: 'Courier New', monospace; color: #a6e3a1; margin: 20px 0;">
+        // Príklad zacyklenia priestoru (Domain Repetition)<br>
+        vec3 spacing = vec3(5.0);<br>
+        vec3 q = mod(p + 0.5 * spacing, spacing) - 0.5 * spacing;<br>
+        return sdSphere(q, 1.0);
+    </div>
+</div>
+
+<div class="speech-text">
+    <h2>Zhrnutie etapy modelovania</h2>
+    <p>„Na tomto stupni som vytvoril silný nástroj. Pomocou súborov <code>Demo3</code> až <code>Demo7</code> som dokázal, že <strong>Raymarching</strong> nie je len spôsob ako kresliť gule, ale plnohodnotný systém geometrického modelovania. Naučili sme sa spájať tvary, vyrezávať do nich otvory, plynulo ich zlievať do jednej hmoty a ovládať mierku priestoru.</p>
+
+    <p>Teraz sme sa naučili byť matematickými sochármi: vieme vytvárať komplexné tvary, deformovať ich a dokonca zacykliť priestor do nekonečna pomocou Domain Repetition. Ale pozrite sa na obrazovku – zatiaľ tieto objekty vyzerajú len ako ploché farebné škvrny. Chýba im reálna váha, chýba im kovový lesk a nevrhajú žiadne tiene. Existujú v priestore, ale neinteragujú s ním.
+
+Preto v nasledujúcom bloku urobíme krok od čistej geometrie k skutočnej optike. 'Zapneme svetlo' a rozoberieme si, ako pomocou SDF Gradients vypočítať Normals – ten istý 'citlivý orgán' objektu, ktorý mu umožňuje vidieť zdroj svetla. Premeníme tieto abstraktné figúry na reálne materiály pomocou Phong Reflection Model a naučíme sa vytvárať Soft Shadows, ktoré sa matematicky vypočítavajú priamo 'on the fly'.</p>
+</div>

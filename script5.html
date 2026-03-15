@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Шпаргалка спикера: Raymarching</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        :root {
+            --bg: #0a0a0c;
+            --accent: #ff6b00; /* Hlavná oranžová */
+            --text: #e0e0e0;
+            --card-bg: rgba(22, 22, 26, 0.9);
+            --cue-bg: rgba(255, 107, 0, 0.1); 
+            --cue-text: #ffb380;
+            --gradient: linear-gradient(135deg, #6a5af9, #a855f7, #ec4899);
+            --lava-glow: rgba(255, 107, 0, 0.3);
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.8;
+            font-size: 20px; 
+            color: var(--text);
+            background-color: var(--bg);
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 80px 25px 50px;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-size: 3.2rem;
+            font-weight: 800;
+            text-align: center;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 50px;
+            text-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .block-title {
+            color: var(--accent);
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-top: 60px;
+            margin-bottom: 30px;
+            border-left: 8px solid var(--accent);
+            padding-left: 20px;
+            background: linear-gradient(90deg, rgba(255, 107, 0, 0.15), transparent);
+        }
+
+        /* Akcie pre rečníka */
+        .action-cue {
+            background-color: var(--cue-bg);
+            color: var(--cue-text);
+            padding: 18px 25px;
+            border-radius: 12px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border: 1px solid rgba(255, 107, 0, 0.3);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        /* Hlavné bloky reči */
+        .speech-text {
+            background-color: var(--card-bg);
+            padding: 40px;
+            border-radius: 24px;
+            margin-bottom: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(12px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Efekt pre Smooth Minimum / Metaballs sekciu */
+        .smooth-min-box {
+            background: linear-gradient(145deg, rgba(255,107,0,0.05), rgba(0,0,0,0.2));
+            border: 1px dashed var(--accent);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 25px 0;
+        }
+
+        .speech-text p {
+            margin-bottom: 25px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Finálne zhrnutie (Conclusion) */
+        .finale-text {
+            border: 2px solid transparent;
+            background: linear-gradient(var(--bg), var(--bg)) padding-box, 
+                        var(--gradient) border-box;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            font-style: italic;
+        }
+
+        strong {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        /* Zvýraznenie kódu (napr. smin funkcia) */
+        .code-highlight {
+            font-family: 'Fira Code', monospace;
+            color: #a6e3a1;
+            background: #000;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        /* Navigácia */
+        .back-nav {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+        }
+        
+        .back-nav a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 600;
+            background: rgba(22, 22, 26, 0.8);
+            padding: 10px 20px;
+            border-radius: 30px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .back-nav a:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+    </style>
+</head>
+
+<div class="block-title">Blok 5. Zhrnutie: Matematika ako nástroj tvorcu</div>
+
+<div class="speech-text">
+    <p>«Takže, milí študenti, prešli sme cestu od prázdnej obrazovky až k zložitým scénam generovaným v reálnom čase. Poďme si v krátkosti zrekapitulovať, čo všetko už máme vo svojom arzenáli:</p>
+    
+    <ul>
+        <li>Naučili sme sa ovládať svetelné lúče pomocou algoritmu <strong>Raymarching</strong>.</li>
+        <li>Pochopili sme, ako budovať geometriu nie z polygónov, ale pomocou <strong>SDF funkcií</strong>, čo nám poskytuje nekonečnú detailnosť.</li>
+        <li>Osvojili sme si fyziku svetla podľa <strong>Phonga</strong>, naučili sme sa vypočítavať normály a vytvárať mäkké tiene (<strong>Soft Shadows</strong>).</li>
+    </ul>
+
+    <p>Toto je fundament. Je to pevná, logická báza počítačovej grafiky. Ale teória bez praxe a kreativity sa rýchlo zabúda. Preto navrhujem nezastavovať sa pri statických kockách a sférach.»</p>
+</div>
+
+<hr>
+
+<div class="speech-text" style="background: rgba(255, 107, 0, 0.07); padding: 35px; border-radius: 15px; border: 2px solid #ff6b00; margin-top: 30px;">
+    <h2>3. Nová výzva: Poďme spolu napísať Lava Lamp!</h2>
+    <p>«Teraz vám chcem navrhnúť niečo špeciálne. Spoločne sme postavili "kostru" systému a teraz do nej vdýchneme život. Pozývam vás, aby ste sa ku mne pridali a spoločne sme realizovali projekt <strong>Lava Lamp (Lávová lampa)</strong>.</p>
+
+    <p>Prečo je to skvelé? Pretože lávová lampa je ideálne miesto na otestovanie vašich zručností. Už to nie je len strohá geometria, je to imitácia živého, chaotického procesu. Je to projekt, kde sa matematika stáva "biologickou".»</p>
+
+    <h3>Čo v tomto projekte zrealizujeme:</h3>
+    <ul>
+        <li><strong>Efekt Metaballs a "Rezervoár":</strong> Použijeme funkciu <strong>smin (Smooth Minimum)</strong> s polynomiálnym vyhladzovaním. V kóde vytvoríme statickú základnú sféru (<code>baseSphere</code>) na dne, ktorá slúži ako zdroj lávy. Vďaka <code>smin</code> sa dynamické kvapky pri priblížení k základni plynule vnoria alebo odtrhnú s charakteristickými "ťahavými" mostíkmi, čo simuluje <strong>povrchové napätie</strong> (surface tension) reálnej tekutiny.</li>
+        <li><strong>Dynamická vertikálna animácia:</strong> Namiesto statických pozícií zavedieme trigonometrické závislosti od času (<code>uTime</code>). Každá z piatich kvapiek bude mať vlastnú frekvenciu a amplitúdu pohybu na osi Y, čo vytvorí prirodzený rytmus stúpania horúceho "vosku".</li>
+        <li><strong>Osvetľovací model Blinn-Phong:</strong> Pre dosiahnutie fotorealizmu pridáme výpočet <strong>half-vectoru</strong>. To nám umožní získať ostré a jasné zrkadlové odlesky (<strong>Specular highlights</strong>) s vysokou koncentráciou (128.0), čo dodá láve vzhľad lesklej, hustej olejovitej látky.</li>
+        <li><strong>Gama korekcia (Gamma Correction):</strong> Aby svetlo na vašom monitore vyzeralo prirodzene, celý výsledok prejde finálnou úpravou <code>pow(color, 0.4545)</code>, ktorá odstráni "špinavé" tiene a urobí žiarenie lampy mäkkým a objemným.</li>
+    </ul>
+
+    <p style="font-size: 1.2em; font-weight: bold; color: #ff6b00; margin-top: 20px;">
+        «Toto bude náš spoločný krok od písania kódu k vytváraniu digitálneho umenia. Kto je pripravený otvoriť IDE a premeniť tieto vzorce na živú hmotu?»
+    </p>
+</div>
+
+<div class="speech-text" style="margin-top: 40px; text-align: center; border-top: 1px solid #444; padding-top: 30px;">
+    <p>«Raymarching je mostom medzi čistou logikou a vizuálnou estetikou. Ďakujem vám za pozornosť venovanú technickej časti a teraz... poďme tvoriť. Naša ďalšia zastávka — spoločná Lávová Lampa!»</p>
+</div>

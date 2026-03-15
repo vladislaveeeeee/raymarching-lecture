@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Шпаргалка спикера: Raymarching Глубокое погружение</title>
+    <style>
+    :root {
+        --bg: #0a0a0c;
+        --accent: #ff6b00; /* Tvoja hlavná oranžová */
+        --text: #e0e0e0;
+        --card-bg: rgba(22, 22, 26, 0.9);
+        --cue-bg: rgba(255, 107, 0, 0.1); 
+        --cue-text: #ffb380;
+        --code-color: #a6e3a1; /* Zelená pre kód */
+        --formula-bg: #000000;
+        --gradient: linear-gradient(135deg, #6a5af9, #a855f7, #ec4899);
+    }
+
+    body {
+        font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
+        line-height: 1.8;
+        font-size: 21px; 
+        color: var(--text);
+        background-color: var(--bg);
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 80px 25px 50px;
+        animation: fadeIn 0.8s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(15px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1 {
+        font-size: 3.2rem;
+        font-weight: 800;
+        text-align: center;
+        background: var(--gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 50px;
+        padding-bottom: 20px;
+    }
+
+    .block-title {
+        color: var(--accent);
+        font-size: 1.8em;
+        font-weight: 700;
+        margin-top: 70px;
+        margin-bottom: 30px;
+        border-left: 8px solid var(--accent);
+        padding-left: 20px;
+        background: linear-gradient(90deg, rgba(255, 107, 0, 0.15), transparent);
+    }
+
+    .action-cue {
+        background-color: var(--cue-bg);
+        color: var(--cue-text);
+        padding: 20px;
+        border-radius: 12px;
+        font-weight: bold;
+        margin-bottom: 30px;
+        font-size: 0.9em;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        border-left: 4px solid var(--accent);
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .speech-text {
+        background-color: var(--card-bg);
+        padding: 40px;
+        border-radius: 20px;
+        margin-bottom: 40px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+    }
+
+    .speech-text p { margin-bottom: 25px; }
+
+    /* Štýlový box pre matematické vzorce */
+    .formula-box {
+        background-color: var(--formula-bg);
+        padding: 30px;
+        border-radius: 15px;
+        text-align: center;
+        margin: 35px 0;
+        border: 1px solid var(--accent);
+        box-shadow: 0 0 20px rgba(255, 107, 0, 0.15);
+        color: #fff;
+    }
+
+    /* Zvýraznenie kódu v texte */
+    .code-snippet {
+        color: var(--code-color);
+        font-family: 'Fira Code', 'Consolas', monospace;
+        background: rgba(0, 0, 0, 0.5);
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 0.9em;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .img-container {
+        margin: 40px 0;
+        text-align: center;
+    }
+
+    .img-container img {
+        max-width: 100%;
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+    }
+
+    strong { color: var(--accent); }
+    em { color: #f9e2af; font-style: normal; font-weight: bold; } /* Zvýraznenie kľúčových slov */
+    
+    /* Navigácia späť */
+    .back-nav {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 1000;
+    }
+    
+    .back-nav a {
+        color: var(--text);
+        text-decoration: none;
+        font-weight: 600;
+        background: rgba(22, 22, 26, 0.8);
+        padding: 10px 20px;
+        border-radius: 30px;
+        backdrop-filter: blur(5px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        font-size: 0.9rem;
+        transition: 0.3s;
+    }
+
+    .back-nav a:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+    }
+</style>
+</head>
+<body>
+
+    <h1>🎙 Сценарий лекции: Raymarching</h1>
+
+    <div class="block-title">Блок 2. Математика невидимого: SDF, Марширование и Нормали (~20 минут)</div>
+
+    <div class="img-container">
+        <a href="assets/image.png" target="_blank">
+            <img src="assets/image.png" alt="SDF Sphere Logic">
+        </a>
+    </div>
+
+    <div class="speech-text">
+        <p>«Прежде чем мы пустим лучи в наш виртуальный мир, нам нужно понять, как мы этот мир описываем. Мы отказываемся от полигонов в пользу <strong>SDF (Signed Distance Functions)</strong> — знаковых функций расстояния. Это фундамент всего, что вы увидите далее.</p>
+        
+        <p>Представьте, что пространство — это не пустота, а поле информации. Каждая точка в нем точно знает расстояние до ближайшего объекта. Если мы возьмем самую простую форму — сферу, её описание превращается в элегантную формулу:</p>
+
+        <div class="img-container">
+        <p style="color: var(--accent-color); font-weight: bold; margin-bottom: 15px;">
+            Matematická definícia SDF sféry:
+        </p>
+        <a href="assets/formula.png" target="_blank">
+            <img src="assets/formula.png" alt="SDF Formula and Logic" style="max-width: 500px; border: 2px solid var(--accent-color);">
+        </a>
+        <p style="font-size: 0.9em; color: #a6e3a1; margin-top: 10px;">
+            (Расстояние от центра до точки минус радиус)
+        </p>
+    </div>
+
+        
+
+        <p>Почему функция <em>"Знаковая"</em>? Посмотрите на экран. Значение <strong>d</strong> говорит нам всё о положении точки:
+            <ul>
+                <li>Если <strong>d > 0</strong>: Точка находится снаружи. Мы в свободном пространстве.</li>
+                <li>Если <strong>d < 0</strong>: Мы внутри объекта. Это "плотное" вещество.</li>
+                <li>Если <strong>d = 0</strong>: Поздравляю, вы стоите ровно на поверхности.</li>
+            </ul>
+        </p>
+        <p>Для видеокарты это идеально: вместо миллионов координат вершин мы передаем одну математическую инструкцию. Это дает нам <strong>бесконечную детализацию</strong> — вы никогда не увидите острых граней полигонов на нашей сфере.»</p>
+    </div>
+
+    <div class="img-container">
+        <a href="assets/image1.png" target="_blank">
+            <img src="assets/image1.png" alt="SDF Sphere Logic">
+        </a>
+    </div>
+
+    <div class="speech-text">
+        <p>«Хорошо, у нас есть формула. Но как превратить её в пиксели на экране? Здесь вступает в игру алгоритм <strong>Sphere Tracing</strong> (Марширование сфер).</p>
+        
+        <p>Посмотрите на верхнюю схему. В обычном рейтрейсинге мы ищем пересечение аналитически. В Raymarching мы действуем как слепой человек с тростью, но очень умной тростью. Из камеры вылетает луч. В начальной точке мы спрашиваем у нашей SDF: "Какое расстояние до ближайшего объекта?".</p>
+
+        <p>Если ответ 5 метров — мы получаем <em>"Безопасную зону"</em>. Посмотрите на эти синие круги на слайде. В радиусе этого круга гарантированно ничего нет. Мы можем мгновенно перепрыгнуть эти 5 метров. В новой точке мы снова спрашиваем дистанцию и снова прыгаем.</p>
+
+        <p>Обратите внимание на второе изображение (image_356af4.png). Видите, как шаги становятся крошечными у самой поверхности? Алгоритм <strong>адаптивен</strong>: он летит на огромной скорости в пустом пространстве и "замедляется" до микроскопической точности, когда приближается к объекту. Это позволяет нам находить поверхность с точностью до 0.001 миллиметра.»</p>
+    </div>
+
+    <div class="img-container">
+        <a href="assets/codeimage.png" target="_blank">
+            <img src="assets/codeimage.png" alt="SDF Sphere Logic">
+        </a>
+    </div>
+
+    <div class="speech-text">
+        <p>«Теперь перенесем эту логику в код. Откройте метод <span class="code-snippet">raymarch</span>. Внутри вы видите цикл <span class="code-snippet">for</span>. Это и есть наши "прыжки". Но чтобы видеокарта не сгорела, пытаясь найти бесконечность, у нас есть три строгих условия выхода, которые вы видите на схеме:</p>
+
+        <p>
+            1. <strong>Удар (Hit):</strong> Если <span class="code-snippet">d < EPSILON</span> (0.001). Мы подошли так близко, что считаем это касанием. Возвращаем пройденный путь <strong>t</strong>.<br>
+            2. <strong>Улет (Miss):</strong> Если <span class="code-snippet">t > MAX_DIST</span>. Луч улетел в открытый космос. Рисуем фон.<br>
+            3. <strong>Лимит (Limit):</strong> Мы сделали <span class="code-snippet">MAX_STEPS</span> (например, 128). Это наш предохранитель, чтобы луч не застрял в бесконечных вычислениях между объектами.
+        </p>
+    </div>
+
+    <div class="img-container">
+        <a href="assets/normala.png" target="_blank">
+            <img src="assets/normala.png" alt="SDF Sphere Logic">
+        </a>
+    </div>
+
+    <div class="speech-text">
+        <p>«Если мы сейчас запустим код, мы увидим плоский белый круг. Почему? Потому что мы нашли точку касания, но не знаем, как она наклонена. Мы не знаем, где у объекта "верх", а где "бок". Нам нужны <strong>Нормали</strong>.</p>
+        
+        <p>В Raymarching есть магический способ найти нормаль, не зная геометрии. Мы используем <strong>Градиент</strong>. Посмотрите на формулу с вашего скриншота. Мы берем точку касания и чуть-чуть (на 0.001) смещаемся вправо, вверх и вперед.</p>
+
+        <div class="formula-box">
+            <span style="font-size: 1.2em;">$$n = \text{normalize}(\text{map}(p + \epsilon) - \text{map}(p - \epsilon))$$</span>
+        </div>
+
+        <p>Мы сравниваем: "Стало ли расстояние больше или меньше при этом сдвиге?". Эта разница и есть вектор направления поверхности. Метод <span class="code-snippet">getNormal</span> в коде делает именно это: он "щупает" пространство вокруг точки касания и вычисляет, куда направлено лицо объекта. Теперь мы готовы направить туда свет и увидеть настоящий объем!»</p>
+    </div>
+
+    <div class="img-container">
+        <a href="assets/Sphera.png" target="_blank">
+            <img src="assets/Sphera.png" alt="SDF Sphere Logic">
+
+        </a>
+    </div>
+
+
+
+    <div class="speech-text">
+        <p>«Посмотрите на результат. Благодаря нормалям, которые мы вычислили из чистой математики, свет ложится на сферу идеально. Мы получили полноценный 3D объект, не нарисовав ни одного треугольника. Но сфера — это только начало. В следующем блоке мы заставим её двигаться и объединим с другими фигурами с помощью <strong>математики слияния</strong>.»</p>
+    </div>
+
+</body>
+</html>
